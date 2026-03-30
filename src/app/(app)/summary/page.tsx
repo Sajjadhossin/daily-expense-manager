@@ -1,0 +1,97 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { BookOpen } from 'lucide-react';
+
+import { useBookStore } from '@/lib/store/book.store';
+import { useTransactionStore } from '@/lib/store/transaction.store';
+import { DateRangeType, DateRange, getDateRange } from '@/lib/utils/date';
+
+import { EmptyState } from '@/components/ui/empty-state';
+import { DateFilter } from '@/components/summary/DateFilter';
+import { SummaryCards } from '@/components/summary/SummaryCards';
+import { CategoryBreakdown } from '@/components/summary/CategoryBreakdown';
+import { Button } from '@/components/ui/button';
+
+export default function SummaryPage() {
+  const router = useRouter();
+  
+  const { activeBookId, categories } = useBookStore();
+  const { getTransactionsByDateRange } = useTransactionStore();
+
+  const [dateType, setDateType] = useState<DateRangeType>('this_month');
+  const [currentRange, setCurrentRange] = useState<DateRange>(getDateRange('this_month'));
+
+  if (!activeBookId) {
+    return (
+      <EmptyState 
+        title="No Cash Book Selected"
+        description="Please select or create a cash book to view your summary."
+        actionLabel="Go to Books"
+        onAction={() => router.push('/books')}
+      />
+    );
+  }
+
+  const handleRangeChange = (range: DateRange, type: DateRangeType) => {
+    setCurrentRange(range);
+    setDateType(type);
+  };
+
+  // Fetch transactions locked to selected ISO range
+  const transactions = getTransactionsByDateRange(
+    activeBookId, 
+    currentRange.startDate.toISOString(), 
+    currentRange.endDate.toISOString()
+  );
+
+  // Quick summary calculate
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpense = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  return (
+    <div className="space-y-6 fade-in max-w-5xl">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Insights</h1>
+          <p className="text-sm text-surface-500">Analyze your ledger distribution and cashflow.</p>
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <DateFilter 
+            currentRange={currentRange}
+            currentType={dateType}
+            onRangeChange={handleRangeChange}
+          />
+          {/* Action to download reports - placeholder for Phase 7 */}
+          <Button variant="outline" className="gap-2 hidden sm:flex shrink-0">
+            <BookOpen className="w-4 h-4" />
+            Full Report
+          </Button>
+        </div>
+      </div>
+
+      <SummaryCards income={totalIncome} expense={totalExpense} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
+        <CategoryBreakdown 
+          transactions={transactions} 
+          categories={categories} 
+          type="expense" 
+        />
+        <CategoryBreakdown 
+          transactions={transactions} 
+          categories={categories} 
+          type="income" 
+        />
+      </div>
+    </div>
+  );
+}

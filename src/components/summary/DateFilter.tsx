@@ -82,6 +82,10 @@ export function DateFilter({ currentRange, onRangeChange, currentType }: DateFil
                 onClick={() => {
                   if (p.value !== 'custom') {
                     handleSelectPreset(p.value);
+                  } else {
+                    setTempStart(currentRange.startDate);
+                    setTempEnd(currentRange.endDate);
+                    onRangeChange({ ...currentRange, label: 'Custom' }, 'custom');
                   }
                 }}
                 className={cn(

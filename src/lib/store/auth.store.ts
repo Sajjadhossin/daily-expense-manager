@@ -8,6 +8,7 @@ interface AuthState {
   isAuthenticated: boolean;
   isHydrated: boolean;
   setAuth: (user: User, token: string) => void;
+  updateProfile: (updates: Partial<User>) => void;
   logout: () => void;
   setHydrated: () => void;
 }
@@ -21,6 +22,9 @@ export const useAuthStore = create<AuthState>()(
       isHydrated: false, // Ensures app knows if local storage has loaded
       
       setAuth: (user, token) => set({ user, token, isAuthenticated: true }),
+      updateProfile: (updates) => set((state) => ({ 
+        user: state.user ? { ...state.user, ...updates } : null 
+      })),
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
       setHydrated: () => set({ isHydrated: true }),
     }),

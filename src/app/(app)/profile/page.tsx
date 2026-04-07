@@ -1,8 +1,139 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { User, Mail, ShieldCheck, CheckCircle2 } from 'lucide-react';
+
+import { useAuthStore } from '@/lib/store/auth.store';
+import { useToast } from '@/components/ui/toast';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+
 export default function ProfilePage() {
+  const { user, updateProfile } = useAuthStore();
+  const toast = useToast();
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Initialize form with store values once they are hydrated
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+    }
+  }, [user]);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      toast.error('Name cannot be empty');
+      return;
+    }
+
+    setIsSaving(true);
+    
+    // Simulate a network delay
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    try {
+      updateProfile({ name, email });
+      toast.success('Profile updated successfully');
+    } catch (err) {
+      toast.error('Failed to update profile');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (!user) return null; // Wait for hydration
+
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Profile</h1>
-      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Profile page will be built in Phase 8.</p>
+    <div className="space-y-6 lg:space-y-8 fade-in max-w-3xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-surface-900 dark:text-surface-50">
+            Personal Profile
+          </h1>
+          <p className="text-sm text-surface-500 mt-1">
+            Update your identity and account settings.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Avatar Sidebar */}
+        <div className="md:col-span-1 space-y-6">
+          <Card className="p-6 flex flex-col items-center text-center">
+             <div className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white shadow-lg mb-4 text-3xl font-bold">
+               {name ? name.charAt(0).toUpperCase() : 'U'}
+             </div>
+             <h3 className="font-semibold text-lg text-surface-900 dark:text-surface-50">
+               {name || 'User'}
+             </h3>
+             <p className="text-sm text-surface-500 mb-4 truncate w-full px-2">
+               {email || 'No email provided'}
+             </p>
+             
+             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-medium border border-primary-100 dark:border-primary-800/50">
+               <CheckCircle2 className="w-3.5 h-3.5" />
+               Account Active
+             </div>
+          </Card>
+        </div>
+
+        {/* Form Main Area */}
+        <div className="md:col-span-2">
+          <Card className="p-6 md:p-8">
+            <h3 className="font-semibold text-surface-900 dark:text-surface-50 mb-6 flex items-center gap-2 text-lg">
+               <User className="w-5 h-5 text-primary-500" />
+               Basic Information
+            </h3>
+
+            <form onSubmit={handleSave} className="space-y-6">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-surface-900 dark:text-surface-50">
+                  Full Name
+                </label>
+                <Input 
+                  placeholder="e.g. John Doe"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  disabled={isSaving}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-surface-900 dark:text-surface-50">
+                  Email Address
+                </label>
+                <Input 
+                  type="email"
+                  placeholder="name@example.com"
+                  icon={<Mail className="w-4 h-4" />}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSaving}
+                />
+                <p className="text-xs text-surface-500">
+                  Used for login and receiving exported reports.
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-surface-200 dark:border-surface-800 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm text-surface-500">
+                   <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                   Your data is stored locally.
+                </div>
+                <Button type="submit" isLoading={isSaving} disabled={isSaving}>
+                  Save Changes
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

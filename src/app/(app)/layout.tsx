@@ -42,7 +42,6 @@ const sidebarNavItems = [
   { href: '/categories', label: 'Categories', icon: Tags },
   { href: '/reports', label: 'Reports', icon: FileBarChart },
   { href: '/summary', label: 'Summary', icon: FileBarChart },
-  { href: '/trash', label: 'Trash', icon: Trash2 },
   { href: '/settings', label: 'Settings', icon: Settings },
   { href: '/profile', label: 'Profile', icon: User },
 ];

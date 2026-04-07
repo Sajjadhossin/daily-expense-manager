@@ -66,12 +66,12 @@ export default function DashboardPage() {
           <h1 className="text-2xl lg:text-3xl font-bold text-surface-900 dark:text-surface-50">
             Welcome back, {user?.name?.split(' ')[0] || 'User'} 👋
           </h1>
-          <p className="text-sm text-surface-500 mt-1 flex items-center gap-2">
+          <div className="text-sm text-surface-500 mt-1 flex items-center gap-2">
             Currently managing 
             <Badge variant="secondary" className="px-2 py-0.5 rounded-lg text-xs font-semibold">
               {activeBook.name}
             </Badge>
-          </p>
+          </div>
         </div>
 
         {/* Quick Actions Desktop */}

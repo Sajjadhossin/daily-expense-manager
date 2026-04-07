@@ -12,6 +12,7 @@ interface GenerateReportOptions {
   startDate: Date;
   endDate: Date;
   dateRangeLabel: string;
+  categoryFilterName?: string;
 }
 
 export const generateReportPdf = ({
@@ -21,6 +22,7 @@ export const generateReportPdf = ({
   startDate,
   endDate,
   dateRangeLabel,
+  categoryFilterName,
 }: GenerateReportOptions) => {
   const doc = new jsPDF('p', 'pt', 'a4');
   
@@ -62,7 +64,11 @@ export const generateReportPdf = ({
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(55, 65, 81); // Tailwind gray-700
-  doc.text(`Period: ${format(startDate, 'MMM dd, yyyy')} - ${format(endDate, 'MMM dd, yyyy')} (${dateRangeLabel})`, 40, 110);
+  let periodText = `Period: ${format(startDate, 'MMM dd, yyyy')} - ${format(endDate, 'MMM dd, yyyy')} (${dateRangeLabel})`;
+  if (categoryFilterName && categoryFilterName !== 'All Categories') {
+    periodText += ` | Category: ${categoryFilterName}`;
+  }
+  doc.text(periodText, 40, 110);
   
   // Render Summary Block
   doc.setFillColor(249, 250, 251); // Gray 50

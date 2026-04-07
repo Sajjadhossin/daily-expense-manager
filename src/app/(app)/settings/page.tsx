@@ -56,7 +56,7 @@ export default function SettingsPage() {
             {user?.name || 'User'}
           </h2>
           <p className="text-sm text-surface-500">
-            {user?.phone || user?.email || 'No contact info'}
+            {user?.email || 'No contact info'}
           </p>
         </div>
       </div>

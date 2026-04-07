@@ -15,6 +15,8 @@ import { DateFilter } from '@/components/summary/DateFilter';
 import { SummaryCards } from '@/components/summary/SummaryCards';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Select } from '@/components/ui/select';
+import * as Icons from 'lucide-react';
 
 export default function ReportsPage() {
   const router = useRouter();
@@ -24,6 +26,7 @@ export default function ReportsPage() {
 
   const [dateType, setDateType] = useState<DateRangeType>('this_month');
   const [currentRange, setCurrentRange] = useState<DateRange>(getDateRange('this_month'));
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const activeBook = getActiveBook();
 
@@ -43,12 +46,30 @@ export default function ReportsPage() {
     setDateType(type);
   };
 
+  // Format category options for the Select dropdown
+  const categoryOptions = [
+    { value: 'all', label: 'All Categories' },
+    ...categories.map(c => {
+      const Icon = (Icons as any)[c.icon];
+      return {
+        value: c.id,
+        label: c.name,
+        icon: Icon ? <Icon className="w-4 h-4" /> : undefined
+      };
+    })
+  ];
+
   // Fetch transactions spanning exactly the bounds
-  const transactions = getTransactionsByDateRange(
+  let transactions = getTransactionsByDateRange(
     activeBookId, 
     currentRange.startDate.toISOString(), 
     currentRange.endDate.toISOString()
   );
+
+  // Apply Category Filter
+  if (selectedCategory !== 'all') {
+    transactions = transactions.filter(t => t.categoryId === selectedCategory);
+  }
 
   const totalIncome = transactions
     .filter(t => t.type === 'income')
@@ -65,7 +86,8 @@ export default function ReportsPage() {
       categories,
       startDate: currentRange.startDate,
       endDate: currentRange.endDate,
-      dateRangeLabel: currentRange.label
+      dateRangeLabel: currentRange.label,
+      categoryFilterName: selectedCategory === 'all' ? 'All Categories' : categories.find(c => c.id === selectedCategory)?.name
     });
   };
 
@@ -78,7 +100,15 @@ export default function ReportsPage() {
           <p className="text-sm text-surface-500">View and export tabular statements.</p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="w-[200px]">
+             <Select 
+               options={categoryOptions}
+               value={selectedCategory}
+               onChange={setSelectedCategory}
+               placeholder="Filter Category"
+             />
+          </div>
           <DateFilter 
             currentRange={currentRange}
             currentType={dateType}

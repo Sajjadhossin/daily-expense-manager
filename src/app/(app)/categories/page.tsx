@@ -164,12 +164,6 @@ export default function CategoriesPage() {
           <Button className="w-full mt-4" size="lg" onClick={handleSave}>
             {editingCat ? 'Save Changes' : 'Create Category'}
           </Button>
-
-          {editingCat?.isSystem && (
-            <p className="text-xs text-center text-surface-500 mt-2">
-              Note: System categories cannot be deleted, but you can rename them.
-            </p>
-          )}
         </div>
       </BottomSheet>
 
@@ -232,15 +226,13 @@ function CategoryList({
               >
                 <Edit2 className="w-4 h-4" />
               </button>
-              {!cat.isSystem && (
-                <button 
-                  onClick={() => onDelete(cat.id)}
-                  className="p-2 rounded-lg text-surface-400 hover:bg-expense-100 dark:hover:bg-expense-900/30 hover:text-expense-600 dark:hover:text-expense-400 transition-colors"
-                  title="Delete"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
+              <button 
+                onClick={() => onDelete(cat.id)}
+                className="p-2 rounded-lg text-surface-400 hover:bg-expense-100 dark:hover:bg-expense-900/30 hover:text-expense-600 dark:hover:text-expense-400 transition-colors"
+                title="Delete"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
         ))

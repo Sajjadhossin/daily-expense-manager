@@ -2,28 +2,25 @@
 
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuthStore } from '@/lib/store/auth.store';
+import { useSession } from 'next-auth/react';
 import { PageLoader } from '@/components/ui/loader';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isHydrated } = useAuthStore();
+  const { status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only run protection logic after zustand is fully hydrated from localStorage
-    if (isHydrated) {
-      const isAuthPath = pathname === '/' || pathname.startsWith('/login');
+    if (status === 'unauthenticated') {
+      const isAuthPath = pathname === '/' || pathname.startsWith('/login') || pathname.startsWith('/register');
       
-      if (!isAuthenticated && !isAuthPath) {
-        // Redundant with middleware, but acts as a client-side fallback
+      if (!isAuthPath) {
         router.replace('/');
       }
     }
-  }, [isAuthenticated, isHydrated, pathname, router]);
+  }, [status, pathname, router]);
 
-  // While hydration is happening, render the fullscreen loader to prevent layout flashing
-  if (!isHydrated) {
+  if (status === 'loading') {
     return <PageLoader />;
   }
 

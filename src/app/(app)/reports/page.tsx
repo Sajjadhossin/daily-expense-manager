@@ -6,7 +6,10 @@ import { format, parseISO } from 'date-fns';
 import { ArrowDownToLine, FileText } from 'lucide-react';
 
 import { useBookStore } from '@/lib/store/book.store';
-import { useTransactionStore } from '@/lib/store/transaction.store';
+import { useBooks } from '@/lib/hooks/use-books';
+import { useCategories } from '@/lib/hooks/use-categories';
+import { useTransactions } from '@/lib/hooks/use-transactions';
+
 import { DateRangeType, DateRange, getDateRange } from '@/lib/utils/date';
 import { generateReportPdf } from '@/lib/utils/pdf';
 
@@ -21,14 +24,16 @@ import * as Icons from 'lucide-react';
 export default function ReportsPage() {
   const router = useRouter();
   
-  const { activeBookId, getActiveBook, categories } = useBookStore();
-  const { getTransactionsByDateRange } = useTransactionStore();
+  const { activeBookId } = useBookStore();
+  const { data: books } = useBooks();
+  const { data: categories } = useCategories();
+  const { data: rawTransactions, isLoading } = useTransactions(activeBookId);
 
   const [dateType, setDateType] = useState<DateRangeType>('this_month');
   const [currentRange, setCurrentRange] = useState<DateRange>(getDateRange('this_month'));
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const activeBook = getActiveBook();
+  const activeBook = (books || []).find(b => b.id === activeBookId);
 
   if (!activeBookId || !activeBook) {
     return (
@@ -49,7 +54,7 @@ export default function ReportsPage() {
   // Format category options for the Select dropdown
   const categoryOptions = [
     { value: 'all', label: 'All Categories' },
-    ...categories.map(c => {
+    ...(categories || []).map(c => {
       const Icon = (Icons as any)[c.icon];
       return {
         value: c.id,
@@ -60,11 +65,13 @@ export default function ReportsPage() {
   ];
 
   // Fetch transactions spanning exactly the bounds
-  let transactions = getTransactionsByDateRange(
-    activeBookId, 
-    currentRange.startDate.toISOString(), 
-    currentRange.endDate.toISOString()
-  );
+  const startDateMs = currentRange.startDate.getTime();
+  const endDateMs = currentRange.endDate.getTime();
+  
+  let transactions = (rawTransactions || []).filter(tx => {
+    const txDate = new Date(tx.date).getTime();
+    return txDate >= startDateMs && txDate <= endDateMs;
+  });
 
   // Apply Category Filter
   if (selectedCategory !== 'all') {
@@ -81,13 +88,13 @@ export default function ReportsPage() {
 
   const handleExportPDF = () => {
     generateReportPdf({
-      book: activeBook,
-      transactions,
-      categories,
+      book: activeBook as any,
+      transactions: transactions as any,
+      categories: categories as any || [],
       startDate: currentRange.startDate,
       endDate: currentRange.endDate,
       dateRangeLabel: currentRange.label,
-      categoryFilterName: selectedCategory === 'all' ? 'All Categories' : categories.find(c => c.id === selectedCategory)?.name
+      categoryFilterName: selectedCategory === 'all' ? 'All Categories' : (categories || []).find(c => c.id === selectedCategory)?.name
     });
   };
 
@@ -118,6 +125,7 @@ export default function ReportsPage() {
             className="gap-2 shrink-0 bg-primary-600 outline-none hover:bg-primary-700 text-white" 
             onClick={handleExportPDF}
             disabled={transactions.length === 0}
+            isLoading={isLoading}
           >
             <ArrowDownToLine className="w-4 h-4 text-white" />
             <span className="hidden sm:inline">Export PDF</span>
@@ -130,7 +138,9 @@ export default function ReportsPage() {
 
       {/* Tabular Data View */}
       <Card className="mt-6 overflow-hidden">
-        {transactions.length === 0 ? (
+        {isLoading ? (
+           <div className="p-12 text-center text-surface-500">Loading records...</div>
+        ) : transactions.length === 0 ? (
           <div className="p-12 text-center flex flex-col items-center">
             <div className="w-16 h-16 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mb-4 text-surface-400">
               <FileText className="w-8 h-8" />
@@ -151,18 +161,16 @@ export default function ReportsPage() {
               </thead>
               <tbody className="divide-y divide-surface-100 dark:divide-surface-800/40">
                 {transactions.map((tx) => {
-                  const cat = categories.find((c) => c.id === tx.categoryId);
+                  const cat = (categories || []).find((c) => c.id === tx.categoryId);
                   const isExpense = tx.type === 'expense';
                   
                   return (
                     <tr key={tx.id} className="hover:bg-surface-50/30 dark:hover:bg-surface-800/10 transition-colors">
                       <td className="px-6 py-4">
                         <p className="font-medium text-surface-900 dark:text-surface-50">
-                          {format(parseISO(tx.date), 'MMM dd, yyyy')}
+                          {format(new Date(tx.date), 'MMM dd, yyyy')}
                         </p>
-                        {tx.time && (
-                          <p className="text-xs text-surface-500 mt-0.5">{tx.time}</p>
-                        )}
+                        <p className="text-xs text-surface-500 mt-0.5">{format(new Date(tx.date), 'hh:mm a')}</p>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">

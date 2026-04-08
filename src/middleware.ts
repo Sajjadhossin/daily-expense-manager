@@ -1,40 +1,32 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { auth } from "@/lib/auth";
+import { NextResponse } from "next/server";
 
-// Paths that don't require authentication
-const publicPaths = ['/', '/login/email'];
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  // Check if it's a static file or api route (skip)
-  if (
-    pathname.startsWith('/_next') || 
-    pathname.startsWith('/api') ||
-    pathname.includes('.')
-  ) {
+  const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
+  const isPublicRoute = ["/", "/login/email", "/register"].includes(nextUrl.pathname);
+  const isAuthRoute = nextUrl.pathname.startsWith("/login") || nextUrl.pathname === "/register";
+
+  if (isApiAuthRoute) {
     return NextResponse.next();
   }
 
-  // We check for a dummy cookie that we set on login 
-  // since this is a mock and localStorage isn't available here
-  const token = request.cookies.get('dem-token')?.value;
-  const isPublicPath = publicPaths.includes(pathname);
-  const isAuthPage = pathname.startsWith('/login');
-
-  // 1. If user is logged in and tries to access public auth paths, redirect to dashboard
-  if (token && (isPublicPath || isAuthPage)) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  if (isAuthRoute) {
+    if (isLoggedIn) {
+      return NextResponse.redirect(new URL("/dashboard", nextUrl));
+    }
+    return NextResponse.next();
   }
 
-  // 2. If user is NOT logged in and tries to access protected paths, redirect to home/login
-  if (!token && !isPublicPath) {
-    return NextResponse.redirect(new URL('/', request.url));
+  if (!isLoggedIn && !isPublicRoute) {
+    return NextResponse.redirect(new URL("/", nextUrl));
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

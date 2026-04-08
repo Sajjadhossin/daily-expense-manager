@@ -3,19 +3,19 @@
 import { useState, useEffect } from 'react';
 import { User, Mail, ShieldCheck, CheckCircle2 } from 'lucide-react';
 
-import { useAuthStore } from '@/lib/store/auth.store';
+import { useProfile, useUpdateProfile } from '@/lib/hooks/use-profile';
 import { useToast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 
 export default function ProfilePage() {
-  const { user, updateProfile } = useAuthStore();
+  const { data: user, isLoading } = useProfile();
+  const updateProfile = useUpdateProfile();
   const toast = useToast();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
 
   // Initialize form with store values once they are hydrated
   useEffect(() => {
@@ -32,22 +32,16 @@ export default function ProfilePage() {
       return;
     }
 
-    setIsSaving(true);
-    
-    // Simulate a network delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
     try {
-      updateProfile({ name, email });
+      await updateProfile.mutateAsync({ name, email });
       toast.success('Profile updated successfully');
-    } catch (err) {
-      toast.error('Failed to update profile');
-    } finally {
-      setIsSaving(false);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update profile');
     }
   };
 
-  if (!user) return null; // Wait for hydration
+  if (isLoading) return <div className="p-12 text-center text-surface-500">Loading profile...</div>;
+  if (!user) return null;
 
   return (
     <div className="space-y-6 lg:space-y-8 fade-in max-w-3xl mx-auto">
@@ -100,7 +94,7 @@ export default function ProfilePage() {
                   placeholder="e.g. John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  disabled={isSaving}
+                  disabled={updateProfile.isPending}
                 />
               </div>
 
@@ -114,7 +108,7 @@ export default function ProfilePage() {
                   icon={<Mail className="w-4 h-4" />}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={isSaving}
+                  disabled={true} // Email should usually be immutable via NextAuth unless specifically managed
                 />
                 <p className="text-xs text-surface-500">
                   Used for login and receiving exported reports.
@@ -124,9 +118,9 @@ export default function ProfilePage() {
               <div className="pt-4 border-t border-surface-200 dark:border-surface-800 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-sm text-surface-500">
                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                   Your data is stored locally.
+                   Your data is securely stored.
                 </div>
-                <Button type="submit" isLoading={isSaving} disabled={isSaving}>
+                <Button type="submit" isLoading={updateProfile.isPending} disabled={updateProfile.isPending}>
                   Save Changes
                 </Button>
               </div>

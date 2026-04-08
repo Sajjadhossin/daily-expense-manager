@@ -10,9 +10,11 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-import { useAuthStore } from '@/lib/store/auth.store';
+import { useSession } from 'next-auth/react';
 import { useBookStore } from '@/lib/store/book.store';
-import { useTransactionStore } from '@/lib/store/transaction.store';
+import { useBooks } from '@/lib/hooks/use-books';
+import { useCategories } from '@/lib/hooks/use-categories';
+import { useTransactions } from '@/lib/hooks/use-transactions';
 import { getDateRange } from '@/lib/utils/date';
 import { EmptyState } from '@/components/ui/empty-state';
 import { SummaryCards } from '@/components/summary/SummaryCards';
@@ -20,14 +22,25 @@ import { SummaryCards } from '@/components/summary/SummaryCards';
 export default function DashboardPage() {
   const router = useRouter();
   
-  const { user } = useAuthStore();
-  const { activeBookId, getActiveBook, categories } = useBookStore();
-  const { getTransactionsByBook, getTransactionsByDateRange } = useTransactionStore();
+  const { data: session } = useSession();
+  const user = session?.user;
 
-  const activeBook = getActiveBook();
+  const { activeBookId } = useBookStore();
+  
+  const { data: books, isLoading: booksLoading } = useBooks();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { data: transactions, isLoading: transactionsLoading } = useTransactions(activeBookId);
 
-  // If no book active
-  if (!activeBookId || !activeBook) {
+  const isLoading = booksLoading || categoriesLoading || transactionsLoading;
+
+  if (isLoading) {
+    return <div className="flex h-[50vh] items-center justify-center"><p className="text-surface-500">Loading dashboard...</p></div>;
+  }
+
+  const activeBook = books?.find((b) => b.id === activeBookId) || books?.[0];
+
+  // If no book active or existing
+  if (!activeBook) {
     return (
       <EmptyState 
         title="Welcome to Daily Expense Manager"
@@ -39,16 +52,15 @@ export default function DashboardPage() {
   }
 
   // ---- RECENT TRANSACTIONS ----
-  const allTransactions = getTransactionsByBook(activeBookId);
+  const allTransactions = transactions || [];
   const recentTxs = allTransactions.slice(0, 5); // Last 5
 
   // ---- THIS MONTH SUMMARY ----
   const thisMonthRange = getDateRange('this_month');
-  const thisMonthTxs = getTransactionsByDateRange(
-    activeBookId, 
-    thisMonthRange.startDate.toISOString(), 
-    thisMonthRange.endDate.toISOString()
-  );
+  const thisMonthTxs = allTransactions.filter(tx => {
+    const txDate = parseISO(tx.date.toString());
+    return txDate >= thisMonthRange.startDate && txDate <= thisMonthRange.endDate;
+  });
 
   const thisMonthIncome = thisMonthTxs
     .filter(t => t.type === 'income')
@@ -189,7 +201,7 @@ export default function DashboardPage() {
             ) : (
               <div className="divide-y divide-surface-100 dark:divide-surface-800/50">
                 {recentTxs.map((tx) => {
-                  const category = categories.find(c => c.id === tx.categoryId);
+                  const category = (categories || []).find((c: any) => c.id === tx.categoryId);
                   const isExpense = tx.type === 'expense';
                   const IconComponent = category?.icon && (Icons as any)[category.icon] 
                     ? (Icons as any)[category.icon] 
@@ -210,7 +222,7 @@ export default function DashboardPage() {
                             {category?.name || 'Uncategorized'}
                           </p>
                           <p className="text-xs text-surface-500 flex items-center gap-1.5 mt-0.5 truncate">
-                            <span>{format(parseISO(tx.date), 'MMM dd, hh:mm a')}</span>
+                            <span>{format(new Date(tx.date), 'MMM dd, hh:mm a')}</span>
                             {tx.note && (
                               <>
                                 <span className="w-1 h-1 rounded-full bg-surface-300 dark:bg-surface-700" />

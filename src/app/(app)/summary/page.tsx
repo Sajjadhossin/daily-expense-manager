@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { BookOpen } from 'lucide-react';
 
 import { useBookStore } from '@/lib/store/book.store';
-import { useTransactionStore } from '@/lib/store/transaction.store';
+import { useCategories } from '@/lib/hooks/use-categories';
+import { useTransactions } from '@/lib/hooks/use-transactions';
 import { DateRangeType, DateRange, getDateRange } from '@/lib/utils/date';
 
 import { EmptyState } from '@/components/ui/empty-state';
@@ -17,8 +18,9 @@ import { Button } from '@/components/ui/button';
 export default function SummaryPage() {
   const router = useRouter();
   
-  const { activeBookId, categories } = useBookStore();
-  const { getTransactionsByDateRange } = useTransactionStore();
+  const { activeBookId } = useBookStore();
+  const { data: categories } = useCategories();
+  const { data: rawTransactions, isLoading } = useTransactions(activeBookId);
 
   const [dateType, setDateType] = useState<DateRangeType>('this_month');
   const [currentRange, setCurrentRange] = useState<DateRange>(getDateRange('this_month'));
@@ -40,11 +42,13 @@ export default function SummaryPage() {
   };
 
   // Fetch transactions locked to selected ISO range
-  const transactions = getTransactionsByDateRange(
-    activeBookId, 
-    currentRange.startDate.toISOString(), 
-    currentRange.endDate.toISOString()
-  );
+  const startDateMs = currentRange.startDate.getTime();
+  const endDateMs = currentRange.endDate.getTime();
+  
+  const transactions = (rawTransactions || []).filter(tx => {
+    const txDate = new Date(tx.date).getTime();
+    return txDate >= startDateMs && txDate <= endDateMs;
+  });
 
   // Quick summary calculate
   const totalIncome = transactions
@@ -80,18 +84,22 @@ export default function SummaryPage() {
 
       <SummaryCards income={totalIncome} expense={totalExpense} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
-        <CategoryBreakdown 
-          transactions={transactions} 
-          categories={categories} 
-          type="expense" 
-        />
-        <CategoryBreakdown 
-          transactions={transactions} 
-          categories={categories} 
-          type="income" 
-        />
-      </div>
+      {isLoading ? (
+        <div className="py-12 mt-6 text-center text-surface-500">Loading insights...</div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
+          <CategoryBreakdown 
+            transactions={transactions as any} 
+            categories={categories as any || []} 
+            type="expense" 
+          />
+          <CategoryBreakdown 
+            transactions={transactions as any} 
+            categories={categories as any || []} 
+            type="income" 
+          />
+        </div>
+      )}
     </div>
   );
 }

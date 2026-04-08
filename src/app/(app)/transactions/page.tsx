@@ -12,16 +12,18 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { EmptyState } from '@/components/ui/empty-state';
 import { BottomSheet } from '@/components/ui/bottom-sheet';
 
-import { useTransactionStore } from '@/lib/store/transaction.store';
 import { useBookStore } from '@/lib/store/book.store';
-import { Transaction } from '@/types/transaction';
-import { Category } from '@/types/book';
+import { useTransactions, useDeleteTransaction } from '@/lib/hooks/use-transactions';
+import { useCategories } from '@/lib/hooks/use-categories';
+import { Transaction } from '../../../generated/client';
 
 export default function TransactionsPage() {
   const router = useRouter();
   
-  const { activeBookId, categories } = useBookStore();
-  const { getTransactionsByBook, removeTransaction } = useTransactionStore();
+  const { activeBookId } = useBookStore();
+  const { data: categories } = useCategories();
+  const { data: rawTransactions, isLoading } = useTransactions(activeBookId);
+  const deleteTransaction = useDeleteTransaction();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
@@ -40,12 +42,12 @@ export default function TransactionsPage() {
     );
   }
 
-  const rawTransactions = getTransactionsByBook(activeBookId);
+  const allTransactions = rawTransactions || [];
 
   // Filter 
-  const filtered = rawTransactions.filter(tx => {
+  const filtered = allTransactions.filter(tx => {
     if (!searchQuery) return true;
-    const cat = categories.find(c => c.id === tx.categoryId);
+    const cat = (categories || []).find((c: any) => c.id === tx.categoryId);
     const q = searchQuery.toLowerCase();
     return (
       (tx.note && tx.note.toLowerCase().includes(q)) || 
@@ -56,7 +58,7 @@ export default function TransactionsPage() {
 
   // Group by Date helper
   const groupedTransactions = filtered.reduce((groups: Record<string, Transaction[]>, tx) => {
-    const dateStr = format(parseISO(tx.date), 'yyyy-MM-dd');
+    const dateStr = format(new Date(tx.date), 'yyyy-MM-dd');
     if (!groups[dateStr]) {
       groups[dateStr] = [];
     }
@@ -67,14 +69,22 @@ export default function TransactionsPage() {
   const dates = Object.keys(groupedTransactions).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
 
   // Delete Action
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedTx) {
-      removeTransaction(selectedTx.id);
-      setIsDeleteDialogOpen(false);
-      setIsActionsOpen(false);
-      setSelectedTx(null);
+      try {
+        await deleteTransaction.mutateAsync(selectedTx.id);
+        setIsDeleteDialogOpen(false);
+        setIsActionsOpen(false);
+        setSelectedTx(null);
+      } catch (error) {
+        console.error("Failed to delete", error);
+      }
     }
   };
+
+  if (isLoading) {
+    return <div className="flex h-[50vh] items-center justify-center"><p className="text-surface-500">Loading transactions...</p></div>;
+  }
 
   // Click Action
   const handleTransactionClick = (tx: Transaction) => {
@@ -112,7 +122,7 @@ export default function TransactionsPage() {
         </div>
       </div>
 
-      {rawTransactions.length === 0 ? (
+      {allTransactions.length === 0 ? (
         <EmptyState 
           title="No transactions yet"
           description="Your ledger is completely empty. Start logging your income or expenses."
@@ -151,7 +161,7 @@ export default function TransactionsPage() {
                 {/* Daily List */}
                 <div className="bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-800 rounded-2xl overflow-hidden">
                   {groupedTransactions[dateStr].map((tx, idx) => {
-                    const category = categories.find(c => c.id === tx.categoryId);
+                    const category = (categories || []).find((c: any) => c.id === tx.categoryId);
                     const isExpense = tx.type === 'expense';
                     
                     // Safely grab lucide icon or fallback
@@ -188,7 +198,7 @@ export default function TransactionsPage() {
                             {isExpense ? '-' : '+'}৳ {tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                           </p>
                           <p className="text-[10px] text-surface-400 font-medium">
-                            {format(parseISO(tx.date), 'hh:mm a')}
+                            {format(new Date(tx.date), 'hh:mm a')}
                           </p>
                         </div>
                       </div>
@@ -245,7 +255,7 @@ export default function TransactionsPage() {
             </div>
             
             <p className="text-xs text-center text-surface-400 mt-4">
-              Logged on {format(parseISO(selectedTx.date), 'MMM dd, yyyy')}
+              Logged on {format(new Date(selectedTx.date), 'MMM dd, yyyy')}
             </p>
           </div>
         )}

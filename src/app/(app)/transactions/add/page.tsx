@@ -13,17 +13,25 @@ import { Select } from '@/components/ui/select';
 import { useToast } from '@/components/ui/toast';
 
 import { useBookStore } from '@/lib/store/book.store';
-import { useTransactionStore } from '@/lib/store/transaction.store';
-import { Transaction, TransactionType } from '@/types/transaction';
-import { Category } from '@/types/book';
+import { useBooks } from '@/lib/hooks/use-books';
+import { useCategories } from '@/lib/hooks/use-categories';
+import { useTransactions, useCreateTransaction, useUpdateTransaction } from '@/lib/hooks/use-transactions';
+import { Transaction } from '@/generated/client';
+
+type TransactionType = 'income' | 'expense';
 
 function TransactionForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const toast = useToast();
   
-  const { getActiveBook, getCategoriesByType } = useBookStore();
-  const { addTransaction, updateTransaction, transactions } = useTransactionStore();
+  const { activeBookId } = useBookStore();
+  const { data: books } = useBooks();
+  const { data: categories } = useCategories();
+  const { data: transactions } = useTransactions(activeBookId);
+
+  const createTransaction = useCreateTransaction();
+  const updateTransaction = useUpdateTransaction();
 
   const editId = searchParams.get('edit');
   const initialType = (searchParams.get('type') as TransactionType) || 'expense';
@@ -36,10 +44,10 @@ function TransactionForm() {
 
   // Hydrate form if editing
   useEffect(() => {
-    if (editId) {
+    if (editId && transactions) {
       const tx = transactions.find((t) => t.id === editId);
       if (tx) {
-        setType(tx.type);
+        setType(tx.type as TransactionType);
         setAmount(tx.amount);
         setCategoryId(tx.categoryId);
         setDate(new Date(tx.date));
@@ -48,8 +56,8 @@ function TransactionForm() {
     }
   }, [editId, transactions]);
 
-  const activeBook = getActiveBook();
-  const availableCategories = getCategoriesByType(type);
+  const activeBook = (books || []).find((b) => b.id === activeBookId);
+  const availableCategories = (categories || []).filter((c) => c.type === type).sort((a, b) => a.order - b.order);
 
   // Map categories for Select component
   const categoryOptions = availableCategories.map((c) => ({
@@ -58,7 +66,7 @@ function TransactionForm() {
     icon: c.icon, // Passing string icon name, would need a mapper in production
   }));
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!activeBook) {
       toast.error('No cash book selected');
       return;
@@ -72,27 +80,35 @@ function TransactionForm() {
       return;
     }
 
-    const payload: Transaction = {
-      id: editId || `tx_${Date.now()}`,
-      bookId: activeBook.id,
-      categoryId,
-      type,
-      amount: Number(amount),
-      date: date.toISOString(),
-      note,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    try {
+      if (editId) {
+        await updateTransaction.mutateAsync({
+          id: editId,
+          data: {
+            type,
+            amount: Number(amount),
+            date: date.toISOString(),
+            note,
+            categoryId,
+          }
+        });
+        toast.success('Transaction updated successfully');
+      } else {
+        await createTransaction.mutateAsync({
+          bookId: activeBook.id,
+          categoryId,
+          type,
+          amount: Number(amount),
+          date: date.toISOString(),
+          note,
+        });
+        toast.success('Transaction added successfully');
+      }
 
-    if (editId) {
-      updateTransaction(payload);
-      toast.success('Transaction updated successfully');
-    } else {
-      addTransaction(payload);
-      toast.success('Transaction added successfully');
+      router.back();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to save transaction');
     }
-
-    router.back();
   };
 
   return (
@@ -204,8 +220,12 @@ function TransactionForm() {
           />
         </div>
 
-        {/* Action Button */}
-        <Button size="lg" className="w-full h-14" onClick={handleSave}>
+        <Button 
+          size="lg" 
+          className="w-full h-14" 
+          onClick={handleSave}
+          isLoading={createTransaction.isPending || updateTransaction.isPending}
+        >
           {editId ? 'Save Changes' : 'Save Transaction'}
         </Button>
       </div>

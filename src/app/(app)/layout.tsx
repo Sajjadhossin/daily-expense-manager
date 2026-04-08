@@ -21,7 +21,9 @@ import {
   LogOut,
 } from 'lucide-react';
 import { AuthGuard } from '@/components/auth/auth-guard';
-import { useAuthStore } from '@/lib/store/auth.store';
+import { signOut } from 'next-auth/react';
+import { useProfile } from '@/lib/hooks/use-profile';
+import { useBooks } from '@/lib/hooks/use-books';
 import { useBookStore } from '@/lib/store/book.store';
 
 /* ============================================
@@ -106,17 +108,16 @@ function MobileBottomNav({ onAddClick }: { onAddClick: () => void }) {
    ============================================ */
 function DesktopSidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
   const pathname = usePathname();
-  const { logout } = useAuthStore();
-  const { getActiveBook } = useBookStore();
+  const { data: user } = useProfile();
+  const { data: books } = useBooks();
+  const { activeBookId } = useBookStore();
   const router = useRouter();
 
-  const handleLogout = () => {
-    document.cookie = 'dem-token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    logout();
-    router.push('/');
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
   };
 
-  const activeBook = getActiveBook();
+  const activeBook = (books || []).find(b => b.id === activeBookId);
 
   return (
     <aside
@@ -335,7 +336,6 @@ export default function AppLayout({
 }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showAddSheet, setShowAddSheet] = useState(false);
-  const { isAuthenticated, user } = useAuthStore();
 
   return (
     <AuthGuard>

@@ -1,9 +1,8 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 
-import { Transaction } from '@/types/transaction';
-import { Book, Category } from '@/types/book';
+import { Book, Category, Transaction } from '@/generated/client';
 
 interface GenerateReportOptions {
   book: Book;
@@ -101,7 +100,7 @@ export const generateReportPdf = ({
   const tableData = transactions.map((t) => {
     const isExpense = t.type === 'expense';
     const cat = categories.find((c) => c.id === t.categoryId);
-    const dateFormatted = format(parseISO(t.date), 'MMM dd, yyyy');
+    const dateFormatted = format(t.date, 'MMM dd, yyyy');
     const amountFormatted = `${isExpense ? '-' : '+'} Tk ${t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     
     return [

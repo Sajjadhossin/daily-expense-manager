@@ -5,14 +5,13 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import * as Icons from 'lucide-react';
 import { FileText } from 'lucide-react';
 
-import { Category, CategoryType } from '@/types/book';
-import { Transaction } from '@/types/transaction';
+import { Category, Transaction } from '@/generated/client';
 import { Card } from '@/components/ui/card';
 
 interface CategoryBreakdownProps {
-  transactions: Transaction[];
+  transactions: any[];
   categories: Category[];
-  type: CategoryType;
+  type: 'income' | 'expense';
 }
 
 export function CategoryBreakdown({ transactions, categories, type }: CategoryBreakdownProps) {

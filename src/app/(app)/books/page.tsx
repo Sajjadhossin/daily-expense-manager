@@ -12,11 +12,16 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { BottomSheet } from '@/components/ui/bottom-sheet';
 
 import { useBookStore } from '@/lib/store/book.store';
-import { Book } from '@/types/book';
+import { useBooks, useCreateBook, useUpdateBook, useDeleteBook } from '@/lib/hooks/use-books';
+import { Book } from '../../../generated/client';
 
 export default function BooksPage() {
   const toast = useToast();
-  const { books, activeBookId, setActiveBook, addBook, updateBook, removeBook } = useBookStore();
+  const { activeBookId, setActiveBook } = useBookStore();
+  const { data: books, isLoading } = useBooks();
+  const createBook = useCreateBook();
+  const updateBook = useUpdateBook();
+  const deleteBook = useDeleteBook();
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
@@ -42,41 +47,41 @@ export default function BooksPage() {
     setIsSheetOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name.trim()) {
       toast.error('Book name is required');
       return;
     }
 
-    if (editingBook) {
-      updateBook({
-        ...editingBook,
-        name,
-        description,
-        updatedAt: new Date().toISOString(),
-      });
-      toast.success('Book updated');
-    } else {
-      const newBook: Book = {
-        id: `book_${Date.now()}`,
-        name,
-        description,
-        isDefault: false,
-        balance: 0,
-        currency: 'BDT',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      addBook(newBook);
-      toast.success('Book created successfully');
+    try {
+      if (editingBook) {
+        await updateBook.mutateAsync({
+          id: editingBook.id,
+          data: {
+            name,
+            description,
+          }
+        });
+        toast.success('Book updated');
+      } else {
+        await createBook.mutateAsync({
+          name,
+          description,
+          isDefault: false,
+          currency: 'BDT',
+        });
+        toast.success('Book created successfully');
+      }
+      setIsSheetOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to save book');
     }
-    setIsSheetOpen(false);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deletingId) return;
     try {
-      removeBook(deletingId);
+      await deleteBook.mutateAsync(deletingId);
       toast.success('Book deleted');
     } catch (e: any) {
       toast.error(e.message || 'Failed to delete book');
@@ -84,6 +89,10 @@ export default function BooksPage() {
       setDeletingId(null);
     }
   };
+
+  if (isLoading) {
+    return <div className="flex h-[50vh] items-center justify-center"><p className="text-surface-500">Loading books...</p></div>;
+  }
 
   return (
     <div className="space-y-6 fade-in max-w-4xl">
@@ -99,7 +108,7 @@ export default function BooksPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {books.map((book) => {
+        {(books || []).map((book) => {
           const isActive = book.id === activeBookId;
           return (
             <Card 
@@ -216,7 +225,7 @@ export default function BooksPage() {
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
-          <Button className="w-full mt-4" size="lg" onClick={handleSave}>
+          <Button className="w-full mt-4" size="lg" onClick={handleSave} isLoading={createBook.isPending || updateBook.isPending}>
             {editingBook ? 'Save Changes' : 'Create Book'}
           </Button>
         </div>
@@ -228,9 +237,10 @@ export default function BooksPage() {
         onClose={() => setDeletingId(null)}
         onConfirm={handleDelete}
         title="Delete Cash Book"
-        description="Are you sure you want to delete this cash book? All transactions inside it will be moved to trash."
+        description="Are you sure you want to delete this cash book? All transactions inside it will be permanently deleted."
         confirmText="Delete"
         variant="danger"
+        isLoading={deleteBook.isPending}
       />
     </div>
   );

@@ -11,12 +11,17 @@ import { useToast } from '@/components/ui/toast';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { BottomSheet } from '@/components/ui/bottom-sheet';
 
-import { useBookStore } from '@/lib/store/book.store';
-import { Category, CategoryType } from '@/types/book';
+import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '@/lib/hooks/use-categories';
+import { Category } from '../../../generated/client';
+
+type CategoryType = 'income' | 'expense';
 
 export default function CategoriesPage() {
   const toast = useToast();
-  const { categories, addCategory, updateCategory, removeCategory } = useBookStore();
+  const { data: categories, isLoading } = useCategories();
+  const createCategory = useCreateCategory();
+  const updateCategory = useUpdateCategory();
+  const deleteCategory = useDeleteCategory();
 
   const [activeTab, setActiveTab] = useState<CategoryType>('expense');
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -31,7 +36,7 @@ export default function CategoriesPage() {
   // Delete State
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const filteredCategories = categories
+  const filteredCategories = (categories || [])
     .filter((c) => c.type === activeTab)
     .sort((a, b) => a.order - b.order);
 
@@ -51,40 +56,43 @@ export default function CategoriesPage() {
     setIsSheetOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name.trim()) {
       toast.error('Category name is required');
       return;
     }
 
-    if (editingCat) {
-      updateCategory({
-        ...editingCat,
-        name,
-        icon,
-        color,
-      });
-      toast.success('Category updated');
-    } else {
-      const newCategory: Category = {
-        id: `cat_custom_${Date.now()}`,
-        name,
-        type: activeTab,
-        icon,
-        color,
-        isSystem: false,
-        order: filteredCategories.length + 1,
-      };
-      addCategory(newCategory);
-      toast.success('Category created');
+    try {
+      if (editingCat) {
+        await updateCategory.mutateAsync({
+          id: editingCat.id,
+          data: {
+            name,
+            icon,
+            color,
+            order: editingCat.order,
+          }
+        });
+        toast.success('Category updated');
+      } else {
+        await createCategory.mutateAsync({
+          name,
+          type: activeTab,
+          icon,
+          color,
+        });
+        toast.success('Category created');
+      }
+      setIsSheetOpen(false);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to save category');
     }
-    setIsSheetOpen(false);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deletingId) return;
     try {
-      removeCategory(deletingId);
+      await deleteCategory.mutateAsync(deletingId);
       toast.success('Category deleted');
     } catch (e: any) {
       toast.error(e.message || 'Failed to delete category');
@@ -92,6 +100,10 @@ export default function CategoriesPage() {
       setDeletingId(null);
     }
   };
+
+  if (isLoading) {
+    return <div className="flex h-[50vh] items-center justify-center"><p className="text-surface-500">Loading categories...</p></div>;
+  }
 
   return (
     <div className="space-y-6 fade-in max-w-4xl">
@@ -161,7 +173,7 @@ export default function CategoriesPage() {
             />
           </div>
           
-          <Button className="w-full mt-4" size="lg" onClick={handleSave}>
+          <Button className="w-full mt-4" size="lg" onClick={handleSave} isLoading={createCategory.isPending || updateCategory.isPending}>
             {editingCat ? 'Save Changes' : 'Create Category'}
           </Button>
         </div>
@@ -176,6 +188,7 @@ export default function CategoriesPage() {
         description="Are you sure you want to delete this category? Past transactions will retain the name but lose the category link."
         confirmText="Delete"
         variant="danger"
+        isLoading={deleteCategory.isPending}
       />
     </div>
   );

@@ -8,13 +8,12 @@ import { ChevronLeft, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/toast';
-import { useAuthStore } from '@/lib/store/auth.store';
-import { mockAuthService } from '@/services/mock/auth.mock';
+import { signIn } from 'next-auth/react';
+import { Loader2 } from 'lucide-react';
 
 export default function EmailLoginPage() {
   const router = useRouter();
   const toast = useToast();
-  const { setAuth } = useAuthStore();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,16 +28,22 @@ export default function EmailLoginPage() {
 
     setIsLoading(true);
     try {
-      const { user, token } = await mockAuthService.loginWithEmail(email, password);
-      setAuth(user, token);
-      
-      // Set dummy cookie for middleware
-      document.cookie = `dem-token=${token}; path=/; max-age=86400`;
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast.error('Invalid email or password');
+        return;
+      }
       
       toast.success('Successfully logged in!');
       router.push('/dashboard');
+      router.refresh();
     } catch (err: any) {
-      toast.error(err.message || 'Login failed');
+      toast.error('An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -105,6 +110,18 @@ export default function EmailLoginPage() {
             Sign In
           </Button>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-surface-500">
+            Don't have an account?{' '}
+            <button 
+              onClick={() => router.push('/register')}
+              className="text-primary-600 dark:text-primary-400 font-semibold hover:underline"
+            >
+              Create an account
+            </button>
+          </p>
+        </div>
       </motion.div>
     </div>
   );

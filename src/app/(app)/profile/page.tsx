@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { User, Mail, ShieldCheck, CheckCircle2, AlertTriangle, Trash2 } from 'lucide-react';
 
 import { useProfile, useUpdateProfile, useDeleteAccount } from '@/lib/hooks/use-profile';
@@ -63,9 +64,19 @@ export default function ProfilePage() {
         {/* Avatar Sidebar */}
         <div className="md:col-span-1 space-y-6">
           <Card className="p-6 flex flex-col items-center text-center">
-             <div className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white shadow-lg mb-4 text-3xl font-bold">
-               {name ? name.charAt(0).toUpperCase() : 'U'}
-             </div>
+             {user.image || user.avatarUrl ? (
+               <Image
+                 src={user.image || user.avatarUrl!}
+                 alt={name || 'User'}
+                 width={96}
+                 height={96}
+                 className="w-24 h-24 rounded-full object-cover shadow-lg mb-4 ring-2 ring-primary-200 dark:ring-primary-800"
+               />
+             ) : (
+               <div className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white shadow-lg mb-4 text-3xl font-bold">
+                 {name ? name.charAt(0).toUpperCase() : 'U'}
+               </div>
+             )}
              <h3 className="font-semibold text-lg text-surface-900 dark:text-surface-50">
                {name || 'User'}
              </h3>

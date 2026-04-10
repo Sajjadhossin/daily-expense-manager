@@ -17,6 +17,7 @@ export async function GET(req: Request) {
         id: true,
         name: true,
         email: true,
+        image: true,
         avatarUrl: true,
         createdAt: true,
       },
@@ -88,6 +89,7 @@ export async function PATCH(req: Request) {
         id: true,
         name: true,
         email: true,
+        image: true,
         avatarUrl: true,
       },
     });

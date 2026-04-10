@@ -2,7 +2,7 @@
 
 import { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FileText, Calendar as CalendarIcon, ChevronLeft } from 'lucide-react';
+import { FileText, ChevronLeft, BookOpen, ChevronDown, Check } from 'lucide-react';
 import { format } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
@@ -26,7 +26,7 @@ function TransactionForm() {
   const searchParams = useSearchParams();
   const toast = useToast();
   
-  const { activeBookId } = useBookStore();
+  const { activeBookId, setActiveBook } = useBookStore();
   const { data: books } = useBooks();
   const { data: categories } = useCategories();
   const { data: transactions } = useTransactions(activeBookId);
@@ -43,6 +43,7 @@ function TransactionForm() {
   const [date, setDate] = useState<Date>(new Date());
   const [time, setTime] = useState<string>(format(new Date(), 'HH:mm'));
   const [note, setNote] = useState('');
+  const [isBookSelectorOpen, setIsBookSelectorOpen] = useState(false);
 
   // Hydrate form if editing
   useEffect(() => {
@@ -130,12 +131,80 @@ function TransactionForm() {
         </h1>
       </div>
 
-      {/* Book Context Note */}
-      <div className="bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-800 rounded-xl p-3 text-sm flex items-center justify-between">
-        <span className="text-surface-500">Adding to Ledger:</span>
-        <span className="font-semibold text-surface-900 dark:text-surface-50">
-          {activeBook?.name || 'Loading...'}
-        </span>
+      {/* Book Selector */}
+      <div className="relative">
+        <button
+          onClick={() => setIsBookSelectorOpen(!isBookSelectorOpen)}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 hover:bg-surface-100 dark:hover:bg-surface-800/50 transition-colors"
+        >
+          <div className="w-9 h-9 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center flex-shrink-0">
+            <BookOpen className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
+          </div>
+          <div className="min-w-0 flex-1 text-left">
+            <p className="text-[10px] uppercase font-semibold text-surface-400 tracking-wider leading-none mb-0.5">Adding to Ledger</p>
+            <p className="text-sm font-medium text-surface-900 dark:text-surface-50 truncate">
+              {activeBook?.name || 'Select a book'}
+            </p>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-surface-400 flex-shrink-0 transition-transform ${isBookSelectorOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {isBookSelectorOpen && (
+          <>
+            <div className="fixed inset-0 z-30" onClick={() => setIsBookSelectorOpen(false)} />
+            <div
+              className="absolute top-full left-0 right-0 mt-2 z-40 rounded-xl border border-surface-200 dark:border-surface-800 shadow-lg overflow-hidden"
+              style={{ backgroundColor: 'var(--bg-card)' }}
+            >
+              {(books || []).length === 0 ? (
+                <div className="p-4 text-center">
+                  <p className="text-sm text-surface-500 mb-3">No books yet</p>
+                  <Button size="sm" onClick={() => { setIsBookSelectorOpen(false); router.push('/books'); }}>
+                    Create Book
+                  </Button>
+                </div>
+              ) : (
+                <div className="py-1 max-h-64 overflow-y-auto">
+                  {(books || []).map((book) => (
+                    <button
+                      key={book.id}
+                      onClick={() => {
+                        setActiveBook(book.id);
+                        setIsBookSelectorOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                        book.id === activeBookId
+                          ? 'bg-primary-50 dark:bg-primary-950/30'
+                          : 'hover:bg-surface-100 dark:hover:bg-surface-800/50'
+                      }`}
+                    >
+                      <BookOpen className={`w-4 h-4 flex-shrink-0 ${
+                        book.id === activeBookId
+                          ? 'text-primary-600 dark:text-primary-400'
+                          : 'text-surface-400'
+                      }`} />
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium truncate ${
+                          book.id === activeBookId
+                            ? 'text-primary-700 dark:text-primary-300'
+                            : 'text-surface-900 dark:text-surface-50'
+                        }`}>
+                          {book.name}
+                        </p>
+                        <p className="text-xs text-surface-500 tabular-nums">
+                          Balance: ৳ {book.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        </p>
+                      </div>
+                      {book.id === activeBookId && (
+                        <Check className="w-4 h-4 text-primary-600 dark:text-primary-400 flex-shrink-0" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Type Toggle */}

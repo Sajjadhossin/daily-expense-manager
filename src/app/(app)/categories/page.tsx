@@ -222,12 +222,12 @@ function CategoryList({
                 </span>
               </div>
               <div>
-                <p className="font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+                <div className="font-semibold text-surface-900 dark:text-surface-50 flex items-center gap-2">
                   {cat.name}
                   {cat.isSystem && (
                     <Badge variant="outline" className="text-[10px] px-1.5 py-0">Default</Badge>
                   )}
-                </p>
+                </div>
               </div>
             </div>
 

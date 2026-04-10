@@ -19,7 +19,6 @@ import {
   TrendingUp,
   TrendingDown,
   LogOut,
-  Info,
 } from 'lucide-react';
 import { AuthGuard } from '@/components/auth/auth-guard';
 import { signOut } from 'next-auth/react';
@@ -47,7 +46,6 @@ const sidebarNavItems = [
   { href: '/summary', label: 'Summary', icon: FileBarChart },
   { href: '/settings', label: 'Settings', icon: Settings },
   { href: '/profile', label: 'Profile', icon: User },
-  { href: '/about', label: 'About', icon: Info },
 ];
 
 /* ============================================

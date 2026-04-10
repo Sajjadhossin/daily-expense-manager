@@ -51,9 +51,13 @@ export default function AboutPage() {
         <p className="text-xs uppercase font-semibold text-surface-400 tracking-wider mb-4">
           Developed by
         </p>
-        <div className="w-20 h-20 rounded-full gradient-primary flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3 shadow-lg">
-          S
-        </div>
+        <img
+          src="/developer.jpg"
+          alt="Sajjad Hossin"
+          width={80}
+          height={80}
+          className="w-20 h-20 rounded-full object-cover mx-auto mb-3 shadow-lg ring-2 ring-primary-200 dark:ring-primary-800"
+        />
         <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50">
           Sajjad Hossin
         </h2>

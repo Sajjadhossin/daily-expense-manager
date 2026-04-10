@@ -216,28 +216,23 @@ export default function DashboardPage() {
                       onClick={() => router.push('/transactions')}
                       className="p-4 flex items-center justify-between hover:bg-surface-50/50 dark:hover:bg-surface-900/50 transition-colors cursor-pointer group"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0 ${category?.color || 'bg-surface-400'}`}>
-                          <IconComponent className="w-5 h-5" />
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 ${category?.color || 'bg-surface-400'}`}>
+                          <IconComponent className="w-4 h-4" />
                         </div>
-                        <div className="overflow-hidden">
-                          <p className="font-semibold text-surface-900 dark:text-surface-50 capitalize truncate">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold text-sm text-surface-900 dark:text-surface-50 capitalize truncate">
                             {category?.name || 'Uncategorized'}
                           </p>
-                          <p className="text-xs text-surface-500 flex items-center gap-1.5 mt-0.5 truncate">
-                            <span>{format(new Date(tx.date), 'MMM dd, hh:mm a')}</span>
-                            {tx.note && (
-                              <>
-                                <span className="w-1 h-1 rounded-full bg-surface-300 dark:bg-surface-700" />
-                                <span className="truncate max-w-[120px] sm:max-w-xs">{tx.note}</span>
-                              </>
-                            )}
+                          <p className="text-xs text-surface-500 truncate mt-0.5">
+                            {format(new Date(tx.date), 'MMM dd, hh:mm a')}
+                            {tx.note && ` · ${tx.note}`}
                           </p>
                         </div>
                       </div>
 
-                      <div className="text-right pl-3 shrink-0">
-                        <p className={`font-bold tabular-nums ${isExpense ? 'text-surface-900 dark:text-surface-50' : 'text-income-600 dark:text-income-400'}`}>
+                      <div className="text-right pl-2 shrink-0">
+                        <p className={`font-bold text-sm tabular-nums ${isExpense ? 'text-surface-900 dark:text-surface-50' : 'text-income-600 dark:text-income-400'}`}>
                           {formatSignedCurrency(isExpense ? -tx.amount : tx.amount, activeBook.currency)}
                         </p>
                       </div>

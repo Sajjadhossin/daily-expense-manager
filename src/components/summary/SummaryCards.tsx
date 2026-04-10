@@ -1,6 +1,6 @@
 import { ArrowDownRight, ArrowUpRight, Wallet } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { formatCurrency, formatSignedCurrency } from '@/lib/utils/currency';
+import { formatCurrency, formatSignedCurrency, formatCompactCurrency } from '@/lib/utils/currency';
 
 interface SummaryCardsProps {
   income: number;
@@ -12,44 +12,47 @@ export function SummaryCards({ income, expense, currency = 'BDT' }: SummaryCards
   const netBalance = income - Math.abs(expense);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-3 gap-2 sm:gap-4">
       {/* Income Card */}
-      <Card className="p-5 flex items-center gap-4 bg-income-50/50 dark:bg-income-950/10 border-income-100 dark:border-income-900/30">
-        <div className="w-12 h-12 rounded-full gradient-income flex items-center justify-center text-white shrink-0 shadow-lg shadow-income-500/20">
-          <ArrowUpRight className="w-6 h-6" />
+      <Card className="p-2.5 sm:p-5 flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-4 bg-income-50/50 dark:bg-income-950/10 border-income-100 dark:border-income-900/30">
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full gradient-income flex items-center justify-center text-white shrink-0 shadow-lg shadow-income-500/20">
+          <ArrowUpRight className="w-4 h-4 sm:w-6 sm:h-6" />
         </div>
-        <div>
-          <p className="text-sm font-medium text-surface-500 mb-0.5">Total Income</p>
-          <p className="text-2xl font-bold tabular-nums text-income-700 dark:text-income-300">
-            {formatCurrency(income, currency)}
+        <div className="text-center sm:text-left min-w-0 w-full">
+          <p className="text-[10px] sm:text-sm font-medium text-surface-500 mb-0.5">Income</p>
+          <p className="text-sm sm:text-2xl font-bold tabular-nums text-income-700 dark:text-income-300 truncate">
+            <span className="sm:hidden">{formatCompactCurrency(income, currency).replace('+', '')}</span>
+            <span className="hidden sm:inline">{formatCurrency(income, currency)}</span>
           </p>
         </div>
       </Card>
 
       {/* Expense Card */}
-      <Card className="p-5 flex items-center gap-4 bg-expense-50/50 dark:bg-expense-950/10 border-expense-100 dark:border-expense-900/30">
-        <div className="w-12 h-12 rounded-full gradient-expense flex items-center justify-center text-white shrink-0 shadow-lg shadow-expense-500/20">
-          <ArrowDownRight className="w-6 h-6" />
+      <Card className="p-2.5 sm:p-5 flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-4 bg-expense-50/50 dark:bg-expense-950/10 border-expense-100 dark:border-expense-900/30">
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full gradient-expense flex items-center justify-center text-white shrink-0 shadow-lg shadow-expense-500/20">
+          <ArrowDownRight className="w-4 h-4 sm:w-6 sm:h-6" />
         </div>
-        <div>
-          <p className="text-sm font-medium text-surface-500 mb-0.5">Total Expense</p>
-          <p className="text-2xl font-bold tabular-nums text-expense-700 dark:text-expense-300">
-            {formatCurrency(expense, currency)}
+        <div className="text-center sm:text-left min-w-0 w-full">
+          <p className="text-[10px] sm:text-sm font-medium text-surface-500 mb-0.5">Expense</p>
+          <p className="text-sm sm:text-2xl font-bold tabular-nums text-expense-700 dark:text-expense-300 truncate">
+            <span className="sm:hidden">{formatCompactCurrency(expense, currency).replace('+', '')}</span>
+            <span className="hidden sm:inline">{formatCurrency(expense, currency)}</span>
           </p>
         </div>
       </Card>
 
       {/* Net Balance Card */}
-      <Card className="p-5 flex items-center gap-4 bg-primary-50/50 dark:bg-primary-950/10 border-primary-100 dark:border-primary-900/30">
-        <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary-500/20">
-          <Wallet className="w-6 h-6" />
+      <Card className="p-2.5 sm:p-5 flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-4 bg-primary-50/50 dark:bg-primary-950/10 border-primary-100 dark:border-primary-900/30">
+        <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full gradient-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-primary-500/20">
+          <Wallet className="w-4 h-4 sm:w-6 sm:h-6" />
         </div>
-        <div>
-          <p className="text-sm font-medium text-surface-500 mb-0.5">Net Flow</p>
-          <p className={`text-2xl font-bold tabular-nums ${
+        <div className="text-center sm:text-left min-w-0 w-full">
+          <p className="text-[10px] sm:text-sm font-medium text-surface-500 mb-0.5">Net Flow</p>
+          <p className={`text-sm sm:text-2xl font-bold tabular-nums truncate ${
             netBalance < 0 ? 'text-expense-600 dark:text-expense-400' : 'text-primary-700 dark:text-primary-300'
           }`}>
-            {formatSignedCurrency(netBalance, currency)}
+            <span className="sm:hidden">{formatCompactCurrency(netBalance, currency)}</span>
+            <span className="hidden sm:inline">{formatSignedCurrency(netBalance, currency)}</span>
           </p>
         </div>
       </Card>

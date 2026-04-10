@@ -351,7 +351,7 @@ export default function AppLayout({
           className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[260px]'
             } pb-24 lg:pb-8`}
         >
-          <div className="max-w-5xl mx-auto px-4 lg:px-8 py-4 lg:py-6">
+          <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-6">
             {children}
           </div>
         </main>

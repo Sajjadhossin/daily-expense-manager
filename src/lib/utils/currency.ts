@@ -47,6 +47,24 @@ export function formatCurrencyForPdf(amount: number, currency: string = 'BDT'): 
   return `${sign} ${info.code} ${formatted}`;
 }
 
+/** Compact format for tight spaces: -৳1,000 or +৳1.5k */
+export function formatCompactCurrency(amount: number, currency: string = 'BDT'): string {
+  const info = getCurrencyInfo(currency);
+  const abs = Math.abs(amount);
+  const sign = amount < 0 ? '-' : '+';
+
+  let formatted: string;
+  if (abs >= 100000) {
+    formatted = (abs / 1000).toFixed(abs % 1000 === 0 ? 0 : 1) + 'k';
+  } else if (abs % 1 === 0) {
+    formatted = abs.toLocaleString(info.locale, { maximumFractionDigits: 0 });
+  } else {
+    formatted = abs.toLocaleString(info.locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  return `${sign}${info.symbol}${formatted}`;
+}
+
 /** Get all supported currency codes */
 export function getSupportedCurrencies(): { value: string; label: string; symbol: string; name: string }[] {
   return Object.entries(CURRENCY_MAP).map(([code, info]) => ({

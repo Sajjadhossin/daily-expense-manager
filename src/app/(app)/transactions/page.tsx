@@ -15,7 +15,7 @@ import { BottomSheet } from '@/components/ui/bottom-sheet';
 import { TransactionsSkeleton } from '@/components/ui/page-skeletons';
 import { useBookStore } from '@/lib/store/book.store';
 import { useBooks } from '@/lib/hooks/use-books';
-import { formatCurrency, formatSignedCurrency, getCurrencySymbol } from '@/lib/utils/currency';
+import { formatCurrency, formatSignedCurrency, formatCompactCurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import { useTransactions, useDeleteTransaction } from '@/lib/hooks/use-transactions';
 import { useCategories } from '@/lib/hooks/use-categories';
 import { Transaction } from '../../../generated/client';
@@ -147,12 +147,12 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="space-y-6 fade-in max-w-4xl">
+    <div className="space-y-4 sm:space-y-6 fade-in max-w-4xl overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Transactions</h1>
-          <p className="text-sm text-surface-500">View and manage ledger entries.</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">Transactions</h1>
+          <p className="text-xs sm:text-sm text-surface-500">View and manage ledger entries.</p>
         </div>
 
         <Button onClick={() => router.push('/transactions/add')} className="gap-2 hidden sm:flex shrink-0">
@@ -162,22 +162,18 @@ export default function TransactionsPage() {
       </div>
 
       {/* Book Selector + Search + Filter */}
-      <div className="flex flex-col sm:flex-row sm:items-stretch gap-3">
+      <div className="space-y-2">
+        {/* Book Selector */}
         <div className="relative">
           <button
             onClick={() => setIsBookSelectorOpen(!isBookSelectorOpen)}
-            className="w-full sm:w-auto h-12 flex items-center gap-2.5 px-4 rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 hover:bg-surface-100 dark:hover:bg-surface-800/50 transition-colors text-left"
+            className="w-full h-9 sm:h-12 flex items-center gap-2 px-2.5 sm:px-4 rounded-lg sm:rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 hover:bg-surface-100 dark:hover:bg-surface-800/50 transition-colors text-left"
           >
-            <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center flex-shrink-0">
-              <BookOpen className="w-4 h-4 text-primary-600 dark:text-primary-400" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] uppercase font-semibold text-surface-400 tracking-wider leading-none mb-0.5">Cash Book</p>
-              <p className="text-sm font-medium text-surface-900 dark:text-surface-50 truncate max-w-[160px]">
-                {activeBook?.name || 'Select a book'}
-              </p>
-            </div>
-            <ChevronDown className={`w-4 h-4 text-surface-400 flex-shrink-0 transition-transform ${isBookSelectorOpen ? 'rotate-180' : ''}`} />
+            <BookOpen className="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0" />
+            <p className="text-xs sm:text-sm font-medium text-surface-900 dark:text-surface-50 truncate flex-1">
+              {activeBook?.name || 'Select a book'}
+            </p>
+            <ChevronDown className={`w-3.5 h-3.5 text-surface-400 shrink-0 transition-transform ${isBookSelectorOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {/* Dropdown */}
@@ -239,31 +235,32 @@ export default function TransactionsPage() {
           )}
         </div>
 
-        <Input
-          placeholder="Search notes, categories..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          icon={<Search className="w-4 h-4" />}
-          className="flex-1"
-        />
-
-        {/* Filter Toggle */}
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 px-4 h-12 rounded-xl border text-sm font-medium transition-colors shrink-0 ${
-            activeFilterCount > 0
-              ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300'
-              : 'border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800/50'
-          }`}
-        >
-          <Filter className="w-4 h-4" />
-          Filters
-          {activeFilterCount > 0 && (
-            <span className="w-5 h-5 rounded-full gradient-primary text-white text-[10px] font-bold flex items-center justify-center">
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
+        {/* Search + Filter row */}
+        <div className="flex items-stretch gap-2">
+          <Input
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            icon={<Search className="w-3.5 h-3.5" />}
+            className="flex-1 !h-9 sm:!h-12 text-xs sm:text-sm"
+          />
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-1.5 px-2.5 sm:px-4 h-9 sm:h-12 rounded-lg sm:rounded-xl border text-xs sm:text-sm font-medium transition-colors shrink-0 ${
+              activeFilterCount > 0
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300'
+                : 'border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800/50'
+            }`}
+          >
+            <Filter className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full gradient-primary text-white text-[9px] sm:text-[10px] font-bold flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Filter Panel */}
@@ -368,7 +365,7 @@ export default function TransactionsPage() {
 
       {/* Filter Summary Bar */}
       {activeBookId && (searchQuery || activeFilterCount > 0) && filtered.length > 0 && (
-        <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/20 border border-primary-100 dark:border-primary-800/50">
+        <div className="flex items-center justify-between px-3 py-2 rounded-lg sm:rounded-xl bg-primary-50 dark:bg-primary-950/20 border border-primary-100 dark:border-primary-800/50">
           <p className="text-xs font-medium text-primary-700 dark:text-primary-300">
             {filtered.length} transaction{filtered.length !== 1 ? 's' : ''} found
           </p>
@@ -414,7 +411,7 @@ export default function TransactionsPage() {
           )}
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-8">
           {dates.map((dateStr) => {
             const dateObj = parseISO(dateStr);
             let dateLabel = format(dateObj, 'MMM dd, yyyy');
@@ -427,19 +424,20 @@ export default function TransactionsPage() {
             }, 0);
 
             return (
-              <div key={dateStr} className="space-y-3">
+              <div key={dateStr} className="space-y-2">
                 {/* Date Header */}
-                <div className="flex items-center justify-between border-b border-surface-200 dark:border-surface-800 pb-2">
-                  <h3 className="font-semibold text-sm text-surface-900 dark:text-surface-50">
+                <div className="flex items-center justify-between border-b border-surface-200 dark:border-surface-800 pb-1.5">
+                  <h3 className="font-semibold text-xs sm:text-sm text-surface-900 dark:text-surface-50">
                     {dateLabel}
                   </h3>
-                  <p className={`text-sm font-semibold tabular-nums ${dayTotal < 0 ? 'text-expense-600 dark:text-expense-400' : 'text-income-600 dark:text-income-400'}`}>
-                    {formatSignedCurrency(dayTotal, activeBook?.currency)}
+                  <p className={`text-xs sm:text-sm font-semibold tabular-nums ${dayTotal < 0 ? 'text-expense-600 dark:text-expense-400' : 'text-income-600 dark:text-income-400'}`}>
+                    <span className="sm:hidden">{formatCompactCurrency(dayTotal, activeBook?.currency)}</span>
+                    <span className="hidden sm:inline">{formatSignedCurrency(dayTotal, activeBook?.currency)}</span>
                   </p>
                 </div>
 
                 {/* Daily List */}
-                <div className="bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-800 rounded-2xl overflow-hidden">
+                <div className="bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-800 rounded-xl sm:rounded-2xl overflow-hidden">
                   {groupedTransactions[dateStr].map((tx, idx) => {
                     const category = (categories || []).find((c: any) => c.id === tx.categoryId);
                     const isExpense = tx.type === 'expense';
@@ -453,32 +451,29 @@ export default function TransactionsPage() {
                       <div 
                         key={tx.id}
                         onClick={() => handleTransactionClick(tx)}
-                        className={`flex items-center justify-between p-4 cursor-pointer hover:bg-surface-100/50 dark:hover:bg-surface-800/50 transition-colors touch-target ${
+                        className={`flex items-center justify-between px-2.5 py-2.5 sm:p-4 cursor-pointer hover:bg-surface-100/50 dark:hover:bg-surface-800/50 transition-colors ${
                           idx !== groupedTransactions[dateStr].length - 1 ? 'border-b border-surface-200 dark:border-surface-800' : ''
                         }`}
                       >
-                        <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white ${category?.color || 'bg-surface-400'}`}>
-                            <IconComponent className="w-5 h-5" />
+                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-white shrink-0 ${category?.color || 'bg-surface-400'}`}>
+                            <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           </div>
-                          <div>
-                            <p className="font-semibold text-surface-900 dark:text-surface-50 capitalize">
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-xs sm:text-sm text-surface-900 dark:text-surface-50 capitalize truncate">
                               {category?.name || 'Uncategorized'}
                             </p>
-                            {tx.note && (
-                              <p className="text-xs text-surface-500 line-clamp-1 max-w-[150px] sm:max-w-xs mt-0.5">
-                                {tx.note}
-                              </p>
-                            )}
+                            <p className="text-[10px] sm:text-xs text-surface-500 truncate mt-0.5">
+                              {format(new Date(tx.date), 'hh:mm a')}
+                              {tx.note && ` · ${tx.note}`}
+                            </p>
                           </div>
                         </div>
 
-                        <div className="text-right">
-                          <p className={`font-bold tabular-nums ${isExpense ? 'text-surface-900 dark:text-surface-50' : 'text-income-600 dark:text-income-400'}`}>
-                            {formatSignedCurrency(isExpense ? -tx.amount : tx.amount, activeBook?.currency)}
-                          </p>
-                          <p className="text-[10px] text-surface-400 font-medium">
-                            {format(new Date(tx.date), 'hh:mm a')}
+                        <div className="text-right pl-1 shrink-0">
+                          <p className={`font-bold text-xs sm:text-sm tabular-nums ${isExpense ? 'text-surface-900 dark:text-surface-50' : 'text-income-600 dark:text-income-400'}`}>
+                            <span className="sm:hidden">{formatCompactCurrency(isExpense ? -tx.amount : tx.amount, activeBook?.currency)}</span>
+                            <span className="hidden sm:inline">{formatSignedCurrency(isExpense ? -tx.amount : tx.amount, activeBook?.currency)}</span>
                           </p>
                         </div>
                       </div>

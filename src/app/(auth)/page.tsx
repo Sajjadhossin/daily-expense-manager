@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { BookOpen, Mail } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import { FcGoogle } from 'react-icons/fc';
 
@@ -38,37 +38,11 @@ export default function WelcomePage() {
       >
         <button
           onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
-          className="flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-2xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 font-semibold text-sm border border-surface-200 dark:border-surface-700 shadow-sm hover:bg-surface-50 dark:hover:bg-surface-750 active:scale-[0.98] transition-all touch-target"
+          className="flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-2xl gradient-primary text-white font-semibold text-sm shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 active:scale-[0.98] transition-all touch-target"
         >
           <FcGoogle className="w-5 h-5" />
           Continue with Google
         </button>
-
-        <div className="flex items-center gap-4 py-2">
-          <div className="flex-1 h-[1px] bg-surface-200 dark:bg-surface-800" />
-          <span className="text-xs text-surface-500 font-medium">OR</span>
-          <div className="flex-1 h-[1px] bg-surface-200 dark:bg-surface-800" />
-        </div>
-
-        <Link
-          href="/login/email"
-          className="flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-2xl gradient-primary text-white font-semibold text-sm shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 active:scale-[0.98] transition-all touch-target"
-        >
-          <Mail className="w-5 h-5" />
-          Continue with Email
-        </Link>
-
-        <div className="pt-2 text-center">
-          <p className="text-sm text-surface-500">
-            Don't have an account?{' '}
-            <Link 
-              href="/register" 
-              className="text-primary-600 dark:text-primary-400 font-semibold hover:underline"
-            >
-              Register
-            </Link>
-          </p>
-        </div>
       </motion.div>
 
       {/* Terms */}
@@ -80,13 +54,13 @@ export default function WelcomePage() {
         style={{ color: 'var(--text-muted)' }}
       >
         By continuing, you agree to our{' '}
-        <span className="text-primary-600 dark:text-primary-400 underline cursor-pointer">
+        <Link href="/terms" className="text-primary-600 dark:text-primary-400 underline">
           Terms of Service
-        </span>{' '}
+        </Link>{' '}
         and{' '}
-        <span className="text-primary-600 dark:text-primary-400 underline cursor-pointer">
+        <Link href="/privacy" className="text-primary-600 dark:text-primary-400 underline">
           Privacy Policy
-        </span>
+        </Link>
       </motion.p>
     </div>
   );

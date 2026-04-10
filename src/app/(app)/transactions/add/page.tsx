@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { NumberInput } from '@/components/ui/number-input';
 import { Calculator } from '@/components/ui/calculator';
 import { DatePicker } from '@/components/ui/date-picker';
+import { TimePicker } from '@/components/ui/time-picker';
 import { Select } from '@/components/ui/select';
 import { useToast } from '@/components/ui/toast';
 
@@ -284,12 +285,7 @@ function TransactionForm() {
             <label className="text-sm font-medium text-surface-900 dark:text-surface-50">
               Time
             </label>
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="w-full h-12 flex items-center px-4 rounded-xl border border-surface-200 dark:border-surface-800 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-50 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors"
-            />
+            <TimePicker value={time} onChange={setTime} />
           </div>
         </div>
 

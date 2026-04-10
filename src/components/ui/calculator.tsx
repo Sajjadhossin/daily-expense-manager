@@ -19,7 +19,7 @@ export function Calculator({ onConfirm, initialValue }: CalculatorProps) {
   const [resetNext, setResetNext] = React.useState(false);
 
   const handleOpen = () => {
-    const val = initialValue && initialValue !== '' ? String(initialValue) : '0';
+    const val = initialValue ? String(initialValue) : '0';
     setDisplay(val);
     setOperator(null);
     setPrevValue(null);

@@ -10,13 +10,15 @@ datasource db {
 // ============ AUTH MODELS ============
 
 model User {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   name           String
-  email          String   @unique
+  email          String    @unique
+  emailVerified  DateTime?
   hashedPassword String?
+  image          String?
   avatarUrl      String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   accounts   Account[]
   books      Book[]

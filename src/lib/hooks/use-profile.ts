@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { signOut } from 'next-auth/react';
 import { profileService, ProfileUpdateInput } from '@/services/api/profile';
 
 export const PROFILE_QUERY_KEY = ['profile'];
@@ -16,6 +17,15 @@ export function useUpdateProfile() {
     mutationFn: (data: ProfileUpdateInput) => profileService.update(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PROFILE_QUERY_KEY });
+    },
+  });
+}
+
+export function useDeleteAccount() {
+  return useMutation({
+    mutationFn: () => profileService.delete(),
+    onSuccess: () => {
+      signOut({ callbackUrl: '/' });
     },
   });
 }

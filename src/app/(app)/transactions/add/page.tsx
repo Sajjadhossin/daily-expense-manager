@@ -100,6 +100,7 @@ function TransactionForm() {
           }
         });
         toast.success('Transaction updated successfully');
+        router.back();
       } else {
         await createTransaction.mutateAsync({
           bookId: activeBook.id,
@@ -111,9 +112,14 @@ function TransactionForm() {
           note,
         });
         toast.success('Transaction added successfully');
-      }
 
-      router.back();
+        // Reset form for next entry
+        setAmount('');
+        setCategoryId('');
+        setNote('');
+        setDate(new Date());
+        setTime(format(new Date(), 'HH:mm'));
+      }
     } catch (error: any) {
       toast.error(error.message || 'Failed to save transaction');
     }

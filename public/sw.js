@@ -31,9 +31,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
-  // Skip non-GET and API/auth requests
+  // Skip non-GET, API, and non-http(s) requests
   if (request.method !== 'GET') return;
   if (request.url.includes('/api/')) return;
+  if (!request.url.startsWith('http')) return;
 
   event.respondWith(
     fetch(request)

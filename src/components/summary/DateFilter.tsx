@@ -61,7 +61,7 @@ export function DateFilter({ currentRange, onRangeChange, currentType }: DateFil
     <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
       <PopoverPrimitive.Trigger asChild>
         <button
-          className="flex h-10 items-center gap-2 rounded-xl bg-surface-100 dark:bg-surface-800 px-4 py-2 text-sm font-medium text-surface-900 dark:text-surface-50 transition-colors hover:bg-surface-200 dark:hover:bg-surface-700 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="flex h-12 items-center gap-2 rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 px-4 py-2 text-sm font-medium text-surface-900 dark:text-surface-50 transition-colors hover:bg-surface-100 dark:hover:bg-surface-800/50 focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           <Calendar className="h-4 w-4 shrink-0 text-primary-600 dark:text-primary-400" />
           <span className="truncate">{displayString}</span>

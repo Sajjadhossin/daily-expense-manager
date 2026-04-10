@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { format, isToday, isYesterday, parseISO } from 'date-fns';
-import { Plus, Edit2, Trash2, ArrowUpRight, ArrowDownRight, Search, FileText, BookOpen, ChevronDown, Check } from 'lucide-react';
+import { format, isToday, isYesterday, parseISO, startOfDay, endOfDay, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths } from 'date-fns';
+import { Plus, Edit2, Trash2, ArrowUpRight, ArrowDownRight, Search, FileText, BookOpen, ChevronDown, Check, Filter, X } from 'lucide-react';
 import * as Icons from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -34,22 +34,75 @@ export default function TransactionsPage() {
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isBookSelectorOpen, setIsBookSelectorOpen] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Filter states
+  const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>('all');
+  const [filterCategoryId, setFilterCategoryId] = useState<string>('all');
+  const [filterDateRange, setFilterDateRange] = useState<string>('all');
 
   const activeBook = (books || []).find(b => b.id === activeBookId);
 
   const allTransactions = rawTransactions || [];
 
-  // Filter 
-  const filtered = allTransactions.filter(tx => {
-    if (!searchQuery) return true;
-    const cat = (categories || []).find((c: any) => c.id === tx.categoryId);
-    const q = searchQuery.toLowerCase();
-    return (
-      (tx.note && tx.note.toLowerCase().includes(q)) || 
-      (cat && cat.name.toLowerCase().includes(q)) ||
-      tx.amount.toString().includes(q)
-    );
-  });
+  const activeFilterCount = [
+    filterType !== 'all',
+    filterCategoryId !== 'all',
+    filterDateRange !== 'all',
+  ].filter(Boolean).length;
+
+  const clearFilters = () => {
+    setFilterType('all');
+    setFilterCategoryId('all');
+    setFilterDateRange('all');
+    setSearchQuery('');
+  };
+
+  // Get date range bounds
+  const getFilterDateBounds = () => {
+    const now = new Date();
+    switch (filterDateRange) {
+      case 'today': return { start: startOfDay(now), end: endOfDay(now) };
+      case 'yesterday': return { start: startOfDay(subDays(now, 1)), end: endOfDay(subDays(now, 1)) };
+      case 'this_week': return { start: startOfWeek(now, { weekStartsOn: 0 }), end: endOfWeek(now, { weekStartsOn: 0 }) };
+      case 'this_month': return { start: startOfMonth(now), end: endOfMonth(now) };
+      case 'last_month': return { start: startOfMonth(subMonths(now, 1)), end: endOfMonth(subMonths(now, 1)) };
+      default: return null;
+    }
+  };
+
+  // Combined filter
+  const filtered = useMemo(() => {
+    const dateBounds = getFilterDateBounds();
+
+    return allTransactions.filter(tx => {
+      // Type filter
+      if (filterType !== 'all' && tx.type !== filterType) return false;
+
+      // Category filter
+      if (filterCategoryId !== 'all' && tx.categoryId !== filterCategoryId) return false;
+
+      // Date range filter
+      if (dateBounds) {
+        const txDate = new Date(tx.date);
+        if (txDate < dateBounds.start || txDate > dateBounds.end) return false;
+      }
+
+      // Text search
+      if (searchQuery) {
+        const cat = (categories || []).find((c: any) => c.id === tx.categoryId);
+        const q = searchQuery.toLowerCase();
+        const matchesText =
+          (tx.note && tx.note.toLowerCase().includes(q)) ||
+          (cat && cat.name.toLowerCase().includes(q)) ||
+          tx.amount.toString().includes(q);
+        if (!matchesText) return false;
+      }
+
+      return true;
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allTransactions, filterType, filterCategoryId, filterDateRange, searchQuery, categories]);
 
   // Group by Date helper
   const groupedTransactions = filtered.reduce((groups: Record<string, Transaction[]>, tx) => {
@@ -108,12 +161,12 @@ export default function TransactionsPage() {
         </Button>
       </div>
 
-      {/* Book Selector + Search */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Book Selector + Search + Filter */}
+      <div className="flex flex-col sm:flex-row sm:items-stretch gap-3">
         <div className="relative">
           <button
             onClick={() => setIsBookSelectorOpen(!isBookSelectorOpen)}
-            className="w-full sm:w-auto flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 hover:bg-surface-100 dark:hover:bg-surface-800/50 transition-colors text-left"
+            className="w-full sm:w-auto h-12 flex items-center gap-2.5 px-4 rounded-xl border border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 hover:bg-surface-100 dark:hover:bg-surface-800/50 transition-colors text-left"
           >
             <div className="w-8 h-8 rounded-lg bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center flex-shrink-0">
               <BookOpen className="w-4 h-4 text-primary-600 dark:text-primary-400" />
@@ -193,7 +246,141 @@ export default function TransactionsPage() {
           icon={<Search className="w-4 h-4" />}
           className="flex-1"
         />
+
+        {/* Filter Toggle */}
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className={`flex items-center gap-2 px-4 h-12 rounded-xl border text-sm font-medium transition-colors shrink-0 ${
+            activeFilterCount > 0
+              ? 'border-primary-500 bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300'
+              : 'border-surface-200 dark:border-surface-800 bg-surface-50 dark:bg-surface-900/50 text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-800/50'
+          }`}
+        >
+          <Filter className="w-4 h-4" />
+          Filters
+          {activeFilterCount > 0 && (
+            <span className="w-5 h-5 rounded-full gradient-primary text-white text-[10px] font-bold flex items-center justify-center">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
       </div>
+
+      {/* Filter Panel */}
+      {showFilters && (
+        <div className="rounded-2xl border border-surface-200 dark:border-surface-800 p-4 space-y-4" style={{ backgroundColor: 'var(--bg-card)' }}>
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-surface-900 dark:text-surface-50">Filters</p>
+            {activeFilterCount > 0 && (
+              <button
+                onClick={clearFilters}
+                className="text-xs font-medium text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
+
+          {/* Type Filter */}
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-surface-500">Type</p>
+            <div className="flex gap-2">
+              {(['all', 'income', 'expense'] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setFilterType(t)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    filterType === t
+                      ? t === 'income'
+                        ? 'bg-income-100 dark:bg-income-900/30 text-income-700 dark:text-income-300'
+                        : t === 'expense'
+                        ? 'bg-expense-100 dark:bg-expense-900/30 text-expense-700 dark:text-expense-300'
+                        : 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                      : 'bg-surface-100 dark:bg-surface-800 text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                  }`}
+                >
+                  {t === 'all' ? 'All' : t === 'income' ? 'Income' : 'Expense'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Date Range Filter */}
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-surface-500">Date Range</p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: 'all', label: 'All Time' },
+                { value: 'today', label: 'Today' },
+                { value: 'yesterday', label: 'Yesterday' },
+                { value: 'this_week', label: 'This Week' },
+                { value: 'this_month', label: 'This Month' },
+                { value: 'last_month', label: 'Last Month' },
+              ].map((d) => (
+                <button
+                  key={d.value}
+                  onClick={() => setFilterDateRange(d.value)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    filterDateRange === d.value
+                      ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                      : 'bg-surface-100 dark:bg-surface-800 text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                  }`}
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Category Filter */}
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-surface-500">Category</p>
+            <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
+              <button
+                onClick={() => setFilterCategoryId('all')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                  filterCategoryId === 'all'
+                    ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                    : 'bg-surface-100 dark:bg-surface-800 text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                }`}
+              >
+                All
+              </button>
+              {(categories || [])
+                .filter((c: any) => filterType === 'all' || c.type === filterType)
+                .map((cat: any) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setFilterCategoryId(cat.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                      filterCategoryId === cat.id
+                        ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                        : 'bg-surface-100 dark:bg-surface-800 text-surface-500 hover:text-surface-700 dark:hover:text-surface-300'
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filter Summary Bar */}
+      {activeBookId && (searchQuery || activeFilterCount > 0) && filtered.length > 0 && (
+        <div className="flex items-center justify-between px-4 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/20 border border-primary-100 dark:border-primary-800/50">
+          <p className="text-xs font-medium text-primary-700 dark:text-primary-300">
+            {filtered.length} transaction{filtered.length !== 1 ? 's' : ''} found
+          </p>
+          <button
+            onClick={clearFilters}
+            className="flex items-center gap-1 text-xs font-medium text-primary-600 dark:text-primary-400 hover:underline"
+          >
+            <X className="w-3 h-3" />
+            Clear
+          </button>
+        </div>
+      )}
 
       {!activeBookId ? (
         <EmptyState
@@ -211,8 +398,20 @@ export default function TransactionsPage() {
           onAction={() => router.push('/transactions/add')}
         />
       ) : filtered.length === 0 ? (
-        <div className="py-12 text-center text-surface-500">
-          No matches found for "{searchQuery}"
+        <div className="py-12 text-center">
+          <p className="text-surface-500">
+            {searchQuery || activeFilterCount > 0
+              ? 'No transactions match your filters.'
+              : 'No transactions found.'}
+          </p>
+          {(searchQuery || activeFilterCount > 0) && (
+            <button
+              onClick={clearFilters}
+              className="mt-3 text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline"
+            >
+              Clear all filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-8">

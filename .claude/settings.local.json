@@ -7,7 +7,9 @@
       "Bash(node -e ':*)",
       "Bash(curl -s http://localhost:3000/manifest.json)",
       "Bash(find:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(xargs grep:*)",
+      "Bash(node -e \"try { require\\('xlsx'\\); console.log\\('xlsx available'\\); } catch\\(e\\) { console.log\\('not installed'\\); }\")"
     ]
   }
 }

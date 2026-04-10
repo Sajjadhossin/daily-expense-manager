@@ -35,18 +35,18 @@ export const generateReportExcel = ({
   const netBalance = totalIncome - totalExpense;
 
   // Summary rows
-  const summaryData = [
+  const summaryData: (string | number)[][] = [
     ['Financial Report - Daily Expense Manager'],
     [`Ledger: ${book.name}`],
     [`Period: ${format(startDate, 'MMM dd, yyyy')} - ${format(endDate, 'MMM dd, yyyy')} (${dateRangeLabel})`],
     ...(categoryFilterName && categoryFilterName !== 'All Categories'
-      ? [`Category: ${categoryFilterName}`]
+      ? [[`Category: ${categoryFilterName}`]]
       : []),
     [`Generated: ${format(new Date(), 'MMM dd, yyyy hh:mm a')}`],
-    [],
+    [''],
     ['Total Income', 'Total Expense', 'Net Balance', 'Currency'],
     [totalIncome, totalExpense, netBalance, cur],
-    [],
+    [''],
     ['Date', 'Time', 'Category', 'Type', 'Amount', 'Note'],
   ];
 

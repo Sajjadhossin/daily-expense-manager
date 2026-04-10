@@ -17,10 +17,11 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           <input
             type="number"
             step="0.01"
+            onWheel={(e) => (e.target as HTMLInputElement).blur()}
             className={cn(
-              "flex h-16 w-full rounded-2xl border bg-surface-50 dark:bg-surface-900/50 pl-11 pr-4 py-2 text-2xl font-bold tabular-nums text-surface-900 dark:text-surface-50 placeholder:text-surface-300 dark:placeholder:text-surface-600 transition-colors focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50",
-              error 
-                ? "border-expense-500 focus-visible:ring-expense-500 text-expense-600 dark:text-expense-400" 
+              "flex h-16 w-full rounded-2xl border bg-surface-50 dark:bg-surface-900/50 pl-11 pr-4 py-2 text-2xl font-bold tabular-nums text-surface-900 dark:text-surface-50 placeholder:text-surface-300 dark:placeholder:text-surface-600 transition-colors focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+              error
+                ? "border-expense-500 focus-visible:ring-expense-500 text-expense-600 dark:text-expense-400"
                 : "border-surface-200 dark:border-surface-800 focus-visible:ring-primary-500",
               className
             )}

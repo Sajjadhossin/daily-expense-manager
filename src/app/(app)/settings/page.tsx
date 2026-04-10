@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { LogOut, Moon, ChevronRight, BookOpen, Tags, FileBarChart } from 'lucide-react';
+import { LogOut, Moon, ChevronRight, BookOpen, Tags, FileBarChart, Info } from 'lucide-react';
 
 import { signOut } from 'next-auth/react';
 import { useProfile } from '@/lib/hooks/use-profile';
@@ -118,6 +118,28 @@ export default function SettingsPage() {
               />
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* About */}
+      <div className="space-y-2">
+        <p className="text-xs font-semibold text-surface-400 uppercase tracking-wider px-1">
+          About
+        </p>
+        <div className="bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-800 rounded-2xl overflow-hidden">
+          <button
+            onClick={() => router.push('/about')}
+            className="w-full p-4 flex items-center gap-3 text-left hover:bg-surface-100/50 dark:hover:bg-surface-800/50 transition-colors active:scale-[0.99]"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary-50 dark:bg-primary-950/30 flex items-center justify-center">
+              <Info className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm text-surface-900 dark:text-surface-50">About & Credits</p>
+              <p className="text-xs text-surface-500">App info, developer, tech stack</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-surface-400 flex-shrink-0" />
+          </button>
         </div>
       </div>
 

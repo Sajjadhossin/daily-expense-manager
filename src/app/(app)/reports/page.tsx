@@ -12,8 +12,10 @@ import { useTransactions } from '@/lib/hooks/use-transactions';
 
 import { DateRangeType, DateRange, getDateRange } from '@/lib/utils/date';
 import { generateReportPdf } from '@/lib/utils/pdf';
+import { formatSignedCurrency } from '@/lib/utils/currency';
 
 import { EmptyState } from '@/components/ui/empty-state';
+import { ReportsSkeleton } from '@/components/ui/page-skeletons';
 import { DateFilter } from '@/components/summary/DateFilter';
 import { SummaryCards } from '@/components/summary/SummaryCards';
 import { Button } from '@/components/ui/button';
@@ -134,12 +136,12 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      <SummaryCards income={totalIncome} expense={totalExpense} />
+      <SummaryCards income={totalIncome} expense={totalExpense} currency={activeBook?.currency} />
 
       {/* Tabular Data View */}
       <Card className="mt-6 overflow-hidden">
         {isLoading ? (
-           <div className="p-12 text-center text-surface-500">Loading records...</div>
+           <ReportsSkeleton />
         ) : transactions.length === 0 ? (
           <div className="p-12 text-center flex flex-col items-center">
             <div className="w-16 h-16 rounded-full bg-surface-100 dark:bg-surface-800 flex items-center justify-center mb-4 text-surface-400">
@@ -187,7 +189,7 @@ export default function ReportsPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <p className={`font-bold tabular-nums ${isExpense ? 'text-surface-900 dark:text-surface-50' : 'text-income-600 dark:text-income-400'}`}>
-                          {isExpense ? '-' : '+'}৳ {tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          {formatSignedCurrency(isExpense ? -tx.amount : tx.amount, activeBook?.currency)}
                         </p>
                         <p className="text-[10px] font-semibold uppercase tracking-wider text-surface-400 mt-1">
                           {tx.type}

@@ -13,8 +13,10 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Select } from '@/components/ui/select';
 import { useToast } from '@/components/ui/toast';
 
+import { TransactionFormSkeleton } from '@/components/ui/page-skeletons';
 import { useBookStore } from '@/lib/store/book.store';
 import { useBooks } from '@/lib/hooks/use-books';
+import { formatCurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import { useCategories } from '@/lib/hooks/use-categories';
 import { useTransactions, useCreateTransaction, useUpdateTransaction } from '@/lib/hooks/use-transactions';
 import { Transaction } from '@/generated/client';
@@ -192,7 +194,7 @@ function TransactionForm() {
                           {book.name}
                         </p>
                         <p className="text-xs text-surface-500 tabular-nums">
-                          Balance: ৳ {book.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          Balance: {formatCurrency(book.balance, book.currency)}
                         </p>
                       </div>
                       {book.id === activeBookId && (
@@ -243,6 +245,7 @@ function TransactionForm() {
               onChange={(e) => setAmount(e.target.value === '' ? '' : Number(e.target.value))}
               placeholder="0.00"
               className="pr-14"
+              currencySymbol={getCurrencySymbol(activeBook?.currency || 'BDT')}
             />
             <Calculator
               initialValue={amount}
@@ -318,7 +321,7 @@ function TransactionForm() {
 
 export default function AddTransactionPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-surface-500">Loading form...</div>}>
+    <Suspense fallback={<TransactionFormSkeleton />}>
       <TransactionForm />
     </Suspense>
   );

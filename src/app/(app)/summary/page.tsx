@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, ChevronLeft } from 'lucide-react';
 
 import { useBookStore } from '@/lib/store/book.store';
+import { useBooks } from '@/lib/hooks/use-books';
 import { useCategories } from '@/lib/hooks/use-categories';
 import { useTransactions } from '@/lib/hooks/use-transactions';
 import { DateRangeType, DateRange, getDateRange } from '@/lib/utils/date';
 
 import { EmptyState } from '@/components/ui/empty-state';
+import { SummarySkeleton } from '@/components/ui/page-skeletons';
 import { DateFilter } from '@/components/summary/DateFilter';
 import { SummaryCards } from '@/components/summary/SummaryCards';
 import { CategoryBreakdown } from '@/components/summary/CategoryBreakdown';
@@ -19,8 +21,11 @@ export default function SummaryPage() {
   const router = useRouter();
   
   const { activeBookId } = useBookStore();
+  const { data: books } = useBooks();
   const { data: categories } = useCategories();
   const { data: rawTransactions, isLoading } = useTransactions(activeBookId);
+
+  const activeBook = (books || []).find(b => b.id === activeBookId);
 
   const [dateType, setDateType] = useState<DateRangeType>('this_month');
   const [currentRange, setCurrentRange] = useState<DateRange>(getDateRange('this_month'));
@@ -63,9 +68,17 @@ export default function SummaryPage() {
     <div className="space-y-6 fade-in max-w-5xl">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Insights</h1>
-          <p className="text-sm text-surface-500">Analyze your ledger distribution and cashflow.</p>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.back()}
+            className="p-2 -ml-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
+          >
+            <ChevronLeft className="w-6 h-6 text-surface-600 dark:text-surface-400" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Insights</h1>
+            <p className="text-sm text-surface-500">Analyze your ledger distribution and cashflow.</p>
+          </div>
         </div>
         
         <div className="flex items-center gap-3">
@@ -82,21 +95,23 @@ export default function SummaryPage() {
         </div>
       </div>
 
-      <SummaryCards income={totalIncome} expense={totalExpense} />
+      <SummaryCards income={totalIncome} expense={totalExpense} currency={activeBook?.currency} />
 
       {isLoading ? (
-        <div className="py-12 mt-6 text-center text-surface-500">Loading insights...</div>
+        <SummarySkeleton />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
-          <CategoryBreakdown 
-            transactions={transactions as any} 
-            categories={categories as any || []} 
-            type="expense" 
+          <CategoryBreakdown
+            transactions={transactions as any}
+            categories={categories as any || []}
+            type="expense"
+            currency={activeBook?.currency}
           />
-          <CategoryBreakdown 
-            transactions={transactions as any} 
-            categories={categories as any || []} 
-            type="income" 
+          <CategoryBreakdown
+            transactions={transactions as any}
+            categories={categories as any || []}
+            type="income"
+            currency={activeBook?.currency}
           />
         </div>
       )}

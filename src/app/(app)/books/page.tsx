@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, MoreVertical, Edit2, Trash2, CheckCircle2, Wallet } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Plus, MoreVertical, Edit2, Trash2, CheckCircle2, Wallet, ChevronLeft } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,9 +14,12 @@ import { BottomSheet } from '@/components/ui/bottom-sheet';
 
 import { useBookStore } from '@/lib/store/book.store';
 import { useBooks, useCreateBook, useUpdateBook, useDeleteBook } from '@/lib/hooks/use-books';
+import { formatCurrency } from '@/lib/utils/currency';
+import { BooksSkeleton } from '@/components/ui/page-skeletons';
 import { Book } from '../../../generated/client';
 
 export default function BooksPage() {
+  const router = useRouter();
   const toast = useToast();
   const { activeBookId, setActiveBook } = useBookStore();
   const { data: books, isLoading } = useBooks();
@@ -91,15 +95,23 @@ export default function BooksPage() {
   };
 
   if (isLoading) {
-    return <div className="flex h-[50vh] items-center justify-center"><p className="text-surface-500">Loading books...</p></div>;
+    return <BooksSkeleton />;
   }
 
   return (
     <div className="space-y-6 fade-in max-w-4xl">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Cash Books</h1>
-          <p className="text-sm text-surface-500">Manage your ledgers and daily accounts.</p>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.back()}
+            className="p-2 -ml-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
+          >
+            <ChevronLeft className="w-6 h-6 text-surface-600 dark:text-surface-400" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Cash Books</h1>
+            <p className="text-sm text-surface-500">Manage your ledgers and daily accounts.</p>
+          </div>
         </div>
         <Button onClick={handleOpenCreate} className="gap-2 hidden sm:flex">
           <Plus className="w-4 h-4" />
@@ -164,7 +176,7 @@ export default function BooksPage() {
                     <p className={`text-xl font-bold tabular-nums ${
                       book.balance < 0 ? 'text-expense-600 dark:text-expense-400' : 'text-surface-900 dark:text-surface-50'
                     }`}>
-                      {book.balance < 0 ? '-' : ''}৳ {Math.abs(book.balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      {formatCurrency(book.balance, book.currency)}
                     </p>
                   </div>
                   
@@ -192,7 +204,7 @@ export default function BooksPage() {
       {/* Floating Action Button for Mobile */}
       <button 
         onClick={handleOpenCreate}
-        className="fixed bottom-24 right-4 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg flex items-center justify-center sm:hidden z-40 active:scale-95 transition-transform"
+        className="fixed bottom-28 right-4 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg flex items-center justify-center sm:hidden z-40 active:scale-95 transition-transform"
       >
         <Plus className="w-6 h-6" />
       </button>

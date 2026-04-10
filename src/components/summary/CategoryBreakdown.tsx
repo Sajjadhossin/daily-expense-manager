@@ -7,14 +7,16 @@ import { FileText } from 'lucide-react';
 
 import { Category, Transaction } from '@/generated/client';
 import { Card } from '@/components/ui/card';
+import { formatCurrency, getCurrencySymbol } from '@/lib/utils/currency';
 
 interface CategoryBreakdownProps {
   transactions: any[];
   categories: Category[];
   type: 'income' | 'expense';
+  currency?: string;
 }
 
-export function CategoryBreakdown({ transactions, categories, type }: CategoryBreakdownProps) {
+export function CategoryBreakdown({ transactions, categories, type, currency = 'BDT' }: CategoryBreakdownProps) {
   const data = useMemo(() => {
     // Filter transactions by type
     const filteredTxs = transactions.filter((t) => t.type === type);
@@ -86,7 +88,7 @@ export function CategoryBreakdown({ transactions, categories, type }: CategoryBr
                 ))}
               </Pie>
               <Tooltip 
-                formatter={(value: any) => [`৳ ${Number(value || 0).toLocaleString()}`, 'Total']}
+                formatter={(value: any) => [formatCurrency(Number(value || 0), currency), 'Total']}
                 contentStyle={{ borderRadius: '12px', border: 'none', background: 'var(--bg-card)', color: 'var(--text-primary)', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
                 itemStyle={{ fontWeight: 'bold' }}
               />
@@ -130,7 +132,7 @@ export function CategoryBreakdown({ transactions, categories, type }: CategoryBr
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold tabular-nums text-surface-900 dark:text-surface-50">
-                    ৳ {entry.value.toLocaleString()}
+                    {formatCurrency(entry.value, currency)}
                   </p>
                 </div>
               </div>

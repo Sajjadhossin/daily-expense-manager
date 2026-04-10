@@ -1,12 +1,14 @@
 import { ArrowDownRight, ArrowUpRight, Wallet } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { formatCurrency, formatSignedCurrency } from '@/lib/utils/currency';
 
 interface SummaryCardsProps {
   income: number;
   expense: number;
+  currency?: string;
 }
 
-export function SummaryCards({ income, expense }: SummaryCardsProps) {
+export function SummaryCards({ income, expense, currency = 'BDT' }: SummaryCardsProps) {
   const netBalance = income - Math.abs(expense);
 
   return (
@@ -19,7 +21,7 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
         <div>
           <p className="text-sm font-medium text-surface-500 mb-0.5">Total Income</p>
           <p className="text-2xl font-bold tabular-nums text-income-700 dark:text-income-300">
-            ৳ {income.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            {formatCurrency(income, currency)}
           </p>
         </div>
       </Card>
@@ -32,7 +34,7 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
         <div>
           <p className="text-sm font-medium text-surface-500 mb-0.5">Total Expense</p>
           <p className="text-2xl font-bold tabular-nums text-expense-700 dark:text-expense-300">
-            ৳ {Math.abs(expense).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            {formatCurrency(expense, currency)}
           </p>
         </div>
       </Card>
@@ -47,7 +49,7 @@ export function SummaryCards({ income, expense }: SummaryCardsProps) {
           <p className={`text-2xl font-bold tabular-nums ${
             netBalance < 0 ? 'text-expense-600 dark:text-expense-400' : 'text-primary-700 dark:text-primary-300'
           }`}>
-            {netBalance < 0 ? '-' : '+'}৳ {Math.abs(netBalance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            {formatSignedCurrency(netBalance, currency)}
           </p>
         </div>
       </Card>

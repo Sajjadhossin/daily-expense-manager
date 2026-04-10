@@ -16,7 +16,9 @@ import { useBooks } from '@/lib/hooks/use-books';
 import { useCategories } from '@/lib/hooks/use-categories';
 import { useTransactions } from '@/lib/hooks/use-transactions';
 import { getDateRange } from '@/lib/utils/date';
+import { formatCurrency, formatSignedCurrency } from '@/lib/utils/currency';
 import { EmptyState } from '@/components/ui/empty-state';
+import { DashboardSkeleton } from '@/components/ui/page-skeletons';
 import { SummaryCards } from '@/components/summary/SummaryCards';
 
 export default function DashboardPage() {
@@ -34,7 +36,7 @@ export default function DashboardPage() {
   const isLoading = booksLoading || categoriesLoading || transactionsLoading;
 
   if (isLoading) {
-    return <div className="flex h-[50vh] items-center justify-center"><p className="text-surface-500">Loading dashboard...</p></div>;
+    return <DashboardSkeleton />;
   }
 
   const activeBook = books?.find((b) => b.id === activeBookId) || books?.[0];
@@ -114,7 +116,7 @@ export default function DashboardPage() {
               Ledger Balance
             </p>
             <h2 className="text-4xl lg:text-5xl font-extrabold tabular-nums tracking-tight">
-              {activeBook.balance < 0 ? '-' : ''}৳ {Math.abs(activeBook.balance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+              {formatCurrency(activeBook.balance, activeBook.currency)}
             </h2>
             <p className="text-primary-200 text-sm mt-3 opacity-90 max-w-xs leading-relaxed">
               Available funds across all recorded inflows and outflows in {activeBook.name}.
@@ -125,14 +127,14 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <span className="text-sm text-primary-100 font-medium">This Month In</span>
               <span className="text-sm font-bold text-white tabular-nums">
-                +৳ {thisMonthIncome.toLocaleString('en-IN')}
+                {formatSignedCurrency(thisMonthIncome, activeBook.currency)}
               </span>
             </div>
             <div className="h-px w-full bg-white/10" />
             <div className="flex items-center justify-between">
               <span className="text-sm text-primary-100 font-medium">This Month Out</span>
               <span className="text-sm font-bold text-white tabular-nums">
-                -৳ {thisMonthExpense.toLocaleString('en-IN')}
+                {formatSignedCurrency(-thisMonthExpense, activeBook.currency)}
               </span>
             </div>
           </div>
@@ -142,7 +144,7 @@ export default function DashboardPage() {
       {/* Modular Desktop-Only Sub-Summary */}
       <div className="hidden lg:block">
         <h3 className="font-bold text-surface-900 dark:text-surface-50 mb-3 ml-1">Current Month Overview</h3>
-        <SummaryCards income={thisMonthIncome} expense={thisMonthExpense} />
+        <SummaryCards income={thisMonthIncome} expense={thisMonthExpense} currency={activeBook.currency} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -235,7 +237,7 @@ export default function DashboardPage() {
 
                       <div className="text-right pl-3 shrink-0">
                         <p className={`font-bold tabular-nums ${isExpense ? 'text-surface-900 dark:text-surface-50' : 'text-income-600 dark:text-income-400'}`}>
-                          {isExpense ? '-' : '+'}৳ {tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          {formatSignedCurrency(isExpense ? -tx.amount : tx.amount, activeBook.currency)}
                         </p>
                       </div>
                     </div>

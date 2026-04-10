@@ -42,7 +42,7 @@ export function BottomSheet({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm"
           />
 
           {/* Sheet Element */}
@@ -61,10 +61,10 @@ export function BottomSheet({
               }
             }}
             className={cn(
-              "fixed bottom-0 left-0 right-0 z-50 rounded-t-[32px] bg-surface-50 dark:bg-surface-900 border-t border-surface-200 dark:border-surface-800 shadow-2xl p-6 pb-unsafe",
+              "fixed bottom-0 left-0 right-0 z-[60] rounded-t-[32px] bg-surface-50 dark:bg-surface-900 border-t border-surface-200 dark:border-surface-800 shadow-2xl p-6",
               className
             )}
-            style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 1.5rem)' }}
+            style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px) + 1.5rem, 1.5rem)' }}
           >
             {/* Drag Handle */}
             <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1.5 rounded-full bg-surface-300 dark:bg-surface-700 cursor-grab active:cursor-grabbing" />

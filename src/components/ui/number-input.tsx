@@ -4,15 +4,16 @@ import { cn } from "@/lib/utils"
 export interface NumberInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   error?: string;
+  currencySymbol?: string;
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
-  ({ className, error, ...props }, ref) => {
+  ({ className, error, currencySymbol = '৳', ...props }, ref) => {
     return (
       <div className="w-full relative">
         <div className="relative flex items-center">
           <div className="absolute left-4 flex items-center justify-center text-surface-400 dark:text-surface-500 pointer-events-none text-xl font-medium">
-            ৳
+            {currencySymbol}
           </div>
           <input
             type="number"

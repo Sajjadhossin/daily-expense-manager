@@ -1,7 +1,8 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { BookOpen, Code2, Globe, Mail, Heart, ExternalLink } from 'lucide-react';
+import { BookOpen, Code2, Globe, Mail, Heart, ExternalLink, ChevronLeft } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
 
 const fadeUp = {
@@ -20,8 +21,18 @@ const techStack = [
 ];
 
 export default function AboutPage() {
+  const router = useRouter();
+
   return (
     <div className="space-y-6 fade-in max-w-2xl mx-auto pb-8">
+      {/* Back button - mobile only */}
+      <button
+        onClick={() => router.back()}
+        className="p-2 -ml-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
+      >
+        <ChevronLeft className="w-6 h-6 text-surface-600 dark:text-surface-400" />
+      </button>
+
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}

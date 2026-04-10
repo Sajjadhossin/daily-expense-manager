@@ -2,15 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { User, Mail, ShieldCheck, CheckCircle2, AlertTriangle, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { User, Mail, ShieldCheck, CheckCircle2, AlertTriangle, Trash2, ChevronLeft } from 'lucide-react';
 
 import { useProfile, useUpdateProfile, useDeleteAccount } from '@/lib/hooks/use-profile';
 import { useToast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { ProfileSkeleton } from '@/components/ui/page-skeletons';
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { data: user, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
   const deleteAccount = useDeleteAccount();
@@ -44,19 +47,27 @@ export default function ProfilePage() {
     }
   };
 
-  if (isLoading) return <div className="p-12 text-center text-surface-500">Loading profile...</div>;
+  if (isLoading) return <ProfileSkeleton />;
   if (!user) return null;
 
   return (
     <div className="space-y-6 lg:space-y-8 fade-in max-w-3xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-surface-900 dark:text-surface-50">
-            Personal Profile
-          </h1>
-          <p className="text-sm text-surface-500 mt-1">
-            Update your identity and account settings.
-          </p>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.back()}
+            className="p-2 -ml-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
+          >
+            <ChevronLeft className="w-6 h-6 text-surface-600 dark:text-surface-400" />
+          </button>
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-surface-900 dark:text-surface-50">
+              Personal Profile
+            </h1>
+            <p className="text-sm text-surface-500 mt-1">
+              Update your identity and account settings.
+            </p>
+          </div>
         </div>
       </div>
 

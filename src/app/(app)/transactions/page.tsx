@@ -12,8 +12,10 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { EmptyState } from '@/components/ui/empty-state';
 import { BottomSheet } from '@/components/ui/bottom-sheet';
 
+import { TransactionsSkeleton } from '@/components/ui/page-skeletons';
 import { useBookStore } from '@/lib/store/book.store';
 import { useBooks } from '@/lib/hooks/use-books';
+import { formatCurrency, formatSignedCurrency, getCurrencySymbol } from '@/lib/utils/currency';
 import { useTransactions, useDeleteTransaction } from '@/lib/hooks/use-transactions';
 import { useCategories } from '@/lib/hooks/use-categories';
 import { Transaction } from '../../../generated/client';
@@ -76,7 +78,7 @@ export default function TransactionsPage() {
   };
 
   if (isLoading) {
-    return <div className="flex h-[50vh] items-center justify-center"><p className="text-surface-500">Loading transactions...</p></div>;
+    return <TransactionsSkeleton />;
   }
 
   // Click Action
@@ -169,7 +171,7 @@ export default function TransactionsPage() {
                             {book.name}
                           </p>
                           <p className="text-xs text-surface-500 tabular-nums">
-                            Balance: ৳ {book.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                            Balance: {formatCurrency(book.balance, book.currency)}
                           </p>
                         </div>
                         {book.id === activeBookId && (
@@ -233,7 +235,7 @@ export default function TransactionsPage() {
                     {dateLabel}
                   </h3>
                   <p className={`text-sm font-semibold tabular-nums ${dayTotal < 0 ? 'text-expense-600 dark:text-expense-400' : 'text-income-600 dark:text-income-400'}`}>
-                    {dayTotal > 0 ? '+' : ''}{dayTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {formatSignedCurrency(dayTotal, activeBook?.currency)}
                   </p>
                 </div>
 
@@ -274,7 +276,7 @@ export default function TransactionsPage() {
 
                         <div className="text-right">
                           <p className={`font-bold tabular-nums ${isExpense ? 'text-surface-900 dark:text-surface-50' : 'text-income-600 dark:text-income-400'}`}>
-                            {isExpense ? '-' : '+'}৳ {tx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                            {formatSignedCurrency(isExpense ? -tx.amount : tx.amount, activeBook?.currency)}
                           </p>
                           <p className="text-[10px] text-surface-400 font-medium">
                             {format(new Date(tx.date), 'hh:mm a')}
@@ -293,7 +295,7 @@ export default function TransactionsPage() {
       {/* Floating Action Button for Mobile */}
       <button 
         onClick={() => router.push('/transactions/add')}
-        className="fixed bottom-24 right-4 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg flex items-center justify-center sm:hidden z-40 active:scale-95 transition-transform"
+        className="fixed bottom-28 right-4 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg flex items-center justify-center sm:hidden z-40 active:scale-95 transition-transform"
       >
         <Plus className="w-6 h-6" />
       </button>
@@ -308,7 +310,7 @@ export default function TransactionsPage() {
             <div className="text-center pb-4 border-b border-surface-100 dark:border-surface-800">
               <p className="text-sm font-medium text-surface-500 uppercase tracking-wider mb-2">Options</p>
               <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-                ৳ {selectedTx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                {formatCurrency(selectedTx.amount, activeBook?.currency)}
               </h2>
             </div>
             

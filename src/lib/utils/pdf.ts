@@ -3,6 +3,7 @@ import autoTable from 'jspdf-autotable';
 import { format } from 'date-fns';
 
 import { Book, Category, Transaction } from '@/generated/client';
+import { getCurrencySymbol } from './currency';
 
 interface GenerateReportOptions {
   book: Book;
@@ -42,6 +43,7 @@ export const generateReportPdf = ({
     .reduce((sum, t) => sum + t.amount, 0);
 
   const netBalance = totalIncome - totalExpense;
+  const sym = getCurrencySymbol(book.currency);
 
   // Header Section
   doc.setFontSize(22);
@@ -87,21 +89,20 @@ export const generateReportPdf = ({
   doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(16, 185, 129); // Emerald 500 for Income
-  doc.text(`+ Tk ${totalIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 60, summaryLineY);
+  doc.text(`+${sym} ${totalIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 60, summaryLineY);
 
   doc.setTextColor(249, 115, 22); // Orange 500 for Expense
-  doc.text(`- Tk ${totalExpense.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 250, summaryLineY);
+  doc.text(`-${sym} ${totalExpense.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 250, summaryLineY);
 
-  doc.setTextColor(netBalance < 0 ? 249 : 16, netBalance < 0 ? 115 : 185, netBalance < 0 ? 22 : 129); 
-  // Custom ternary for Net Color (Emerald vs Orange)
-  doc.text(`${netBalance < 0 ? '-' : '+'} Tk ${Math.abs(netBalance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 440, summaryLineY);
+  doc.setTextColor(netBalance < 0 ? 249 : 16, netBalance < 0 ? 115 : 185, netBalance < 0 ? 22 : 129);
+  doc.text(`${netBalance < 0 ? '-' : '+'}${sym} ${Math.abs(netBalance).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 440, summaryLineY);
 
   // Parse transactions into array of arrays for AutoTable
   const tableData = transactions.map((t) => {
     const isExpense = t.type === 'expense';
     const cat = categories.find((c) => c.id === t.categoryId);
     const dateFormatted = format(t.date, 'MMM dd, yyyy');
-    const amountFormatted = `${isExpense ? '-' : '+'} Tk ${t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+    const amountFormatted = `${isExpense ? '-' : '+'}${sym} ${t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     
     return [
       dateFormatted,

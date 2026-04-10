@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { LogOut, Moon, ChevronRight, BookOpen, Tags, FileBarChart, Info, Coins, Check, Search, X } from 'lucide-react';
+import { LogOut, Moon, ChevronRight, ChevronLeft, BookOpen, Tags, FileBarChart, Info, Coins, Check, Search, X } from 'lucide-react';
 
 import { signOut } from 'next-auth/react';
 import { useProfile } from '@/lib/hooks/use-profile';
@@ -65,7 +65,15 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6 fade-in max-w-2xl">
-      <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Settings</h1>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => router.back()}
+          className="p-1.5 -ml-1.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
+        >
+          <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+        </button>
+        <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Settings</h1>
+      </div>
 
       {/* Profile Summary — tappable on mobile */}
       <button

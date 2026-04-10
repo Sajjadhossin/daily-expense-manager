@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, isToday, isYesterday, parseISO, startOfDay, endOfDay, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths } from 'date-fns';
-import { Plus, Edit2, Trash2, ArrowUpRight, ArrowDownRight, Search, FileText, BookOpen, ChevronDown, Check, Filter, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowUpRight, ArrowDownRight, Search, FileText, BookOpen, ChevronDown, ChevronLeft, Check, Filter, X } from 'lucide-react';
 import * as Icons from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -150,9 +150,17 @@ export default function TransactionsPage() {
     <div className="space-y-4 sm:space-y-6 fade-in max-w-4xl overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">Transactions</h1>
-          <p className="text-xs sm:text-sm text-surface-500">View and manage ledger entries.</p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.back()}
+            className="p-1.5 -ml-1.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
+          >
+            <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+          </button>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-surface-900 dark:text-surface-50">Transactions</h1>
+            <p className="text-xs sm:text-sm text-surface-500">View and manage ledger entries.</p>
+          </div>
         </div>
 
         <Button onClick={() => router.push('/transactions/add')} className="gap-2 hidden sm:flex shrink-0">

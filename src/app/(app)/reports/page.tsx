@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, parseISO } from 'date-fns';
-import { ArrowDownToLine, FileText, FileSpreadsheet } from 'lucide-react';
+import { ArrowDownToLine, FileText, FileSpreadsheet, ChevronLeft } from 'lucide-react';
 
 import { useBookStore } from '@/lib/store/book.store';
 import { useBooks } from '@/lib/hooks/use-books';
@@ -106,9 +106,17 @@ export default function ReportsPage() {
     <div className="space-y-6 fade-in max-w-5xl">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Reports</h1>
-          <p className="text-sm text-surface-500">View and export tabular statements.</p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.back()}
+            className="p-1.5 -ml-1.5 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
+          >
+            <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-400" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Reports</h1>
+            <p className="text-sm text-surface-500">View and export tabular statements.</p>
+          </div>
         </div>
         
         <div className="hidden sm:flex items-center gap-2">

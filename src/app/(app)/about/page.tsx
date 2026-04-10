@@ -24,11 +24,11 @@ export default function AboutPage() {
   const router = useRouter();
 
   return (
-    <div className="space-y-6 fade-in max-w-2xl mx-auto pb-8">
+    <div className="space-y-5 sm:space-y-6 fade-in max-w-2xl mx-auto pb-8">
       {/* Back button - mobile only */}
       <button
         onClick={() => router.back()}
-        className="p-2 -ml-2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
+        className="p-2 -ml-2 mb--2 rounded-xl hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors lg:hidden"
       >
         <ChevronLeft className="w-6 h-6 text-surface-600 dark:text-surface-400" />
       </button>
@@ -38,14 +38,14 @@ export default function AboutPage() {
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative overflow-hidden rounded-3xl gradient-primary p-8 text-center"
+        className="relative overflow-hidden rounded-2xl sm:rounded-3xl gradient-primary p-5 sm:p-8 text-center"
       >
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="w-8 h-8 text-white" />
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-3 sm:mb-4">
+            <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1">Daily Expense Manager</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">Daily Expense Manager</h1>
           <p className="text-white/70 text-sm">Version 0.1.0</p>
         </div>
       </motion.div>
@@ -56,10 +56,10 @@ export default function AboutPage() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="rounded-2xl border p-6 text-center"
+        className="rounded-2xl border p-5 sm:p-6 text-center"
         style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-color)' }}
       >
-        <p className="text-xs uppercase font-semibold text-surface-400 tracking-wider mb-4">
+        <p className="text-xs uppercase font-semibold text-surface-400 tracking-wider mb-3 sm:mb-4">
           Developed by
         </p>
         <img
@@ -67,21 +67,21 @@ export default function AboutPage() {
           alt="Sajjad Hossin"
           width={80}
           height={80}
-          className="w-20 h-20 rounded-full object-cover mx-auto mb-3 shadow-lg ring-2 ring-primary-200 dark:ring-primary-800"
+          className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover mx-auto mb-3 shadow-lg ring-2 ring-primary-200 dark:ring-primary-800"
         />
-        <h2 className="text-xl font-bold text-surface-900 dark:text-surface-50">
+        <h2 className="text-lg sm:text-xl font-bold text-surface-900 dark:text-surface-50">
           Sajjad Hossin
         </h2>
         <p className="text-sm text-primary-600 dark:text-primary-400 font-medium mb-4">
           Software Engineer
         </p>
 
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           <a
             href="https://sajjadhossin.github.io/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300 text-sm font-medium hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300 text-xs sm:text-sm font-medium hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
           >
             <Globe className="w-4 h-4" />
             Portfolio
@@ -91,14 +91,14 @@ export default function AboutPage() {
             href="https://github.com/Sajjadhossin"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-xs sm:text-sm font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
           >
             <FaGithub className="w-4 h-4" />
             GitHub
           </a>
           <a
             href="mailto:sajjadhossin.cse@gmail.com"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-sm font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-700 dark:text-surface-300 text-xs sm:text-sm font-medium hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
           >
             <Mail className="w-4 h-4" />
             Email
@@ -112,10 +112,10 @@ export default function AboutPage() {
         initial="hidden"
         animate="visible"
         variants={fadeUp}
-        className="rounded-2xl border p-6"
+        className="rounded-2xl border p-5 sm:p-6"
         style={{ backgroundColor: 'var(--bg-card)', borderColor: 'var(--border-color)' }}
       >
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-3 sm:mb-4">
           <Code2 className="w-5 h-5 text-primary-600 dark:text-primary-400" />
           <h3 className="font-semibold text-surface-900 dark:text-surface-50">Built With</h3>
         </div>

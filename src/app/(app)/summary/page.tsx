@@ -87,8 +87,7 @@ export default function SummaryPage() {
             currentType={dateType}
             onRangeChange={handleRangeChange}
           />
-          {/* Action to download reports - placeholder for Phase 7 */}
-          <Button variant="outline" className="gap-2 hidden sm:flex shrink-0">
+          <Button variant="outline" className="gap-2 shrink-0" onClick={() => router.push('/reports')}>
             <BookOpen className="w-4 h-4" />
             Full Report
           </Button>

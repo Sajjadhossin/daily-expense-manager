@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npm install:*)",
       "Bash(npx next:*)",
-      "Bash(npm -v)"
+      "Bash(npm -v)",
+      "Bash(node -e ':*)",
+      "Bash(curl -s http://localhost:3000/manifest.json)"
     ]
   }
 }

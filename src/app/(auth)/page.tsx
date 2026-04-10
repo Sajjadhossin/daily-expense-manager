@@ -37,7 +37,7 @@ export default function WelcomePage() {
         className="space-y-4"
       >
         <button
-          onClick={() => signIn('google')}
+          onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
           className="flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-2xl bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50 font-semibold text-sm border border-surface-200 dark:border-surface-700 shadow-sm hover:bg-surface-50 dark:hover:bg-surface-750 active:scale-[0.98] transition-all touch-target"
         >
           <FcGoogle className="w-5 h-5" />

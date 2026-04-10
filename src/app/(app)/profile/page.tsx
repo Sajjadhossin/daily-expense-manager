@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Mail, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import Image from 'next/image';
+import { User, Mail, ShieldCheck, CheckCircle2, AlertTriangle, Trash2 } from 'lucide-react';
 
-import { useProfile, useUpdateProfile } from '@/lib/hooks/use-profile';
+import { useProfile, useUpdateProfile, useDeleteAccount } from '@/lib/hooks/use-profile';
 import { useToast } from '@/components/ui/toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,10 +13,13 @@ import { Card } from '@/components/ui/card';
 export default function ProfilePage() {
   const { data: user, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
+  const deleteAccount = useDeleteAccount();
   const toast = useToast();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   // Initialize form with store values once they are hydrated
   useEffect(() => {
@@ -60,9 +64,19 @@ export default function ProfilePage() {
         {/* Avatar Sidebar */}
         <div className="md:col-span-1 space-y-6">
           <Card className="p-6 flex flex-col items-center text-center">
-             <div className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white shadow-lg mb-4 text-3xl font-bold">
-               {name ? name.charAt(0).toUpperCase() : 'U'}
-             </div>
+             {user.image || user.avatarUrl ? (
+               <Image
+                 src={user.image || user.avatarUrl!}
+                 alt={name || 'User'}
+                 width={96}
+                 height={96}
+                 className="w-24 h-24 rounded-full object-cover shadow-lg mb-4 ring-2 ring-primary-200 dark:ring-primary-800"
+               />
+             ) : (
+               <div className="w-24 h-24 rounded-full gradient-primary flex items-center justify-center text-white shadow-lg mb-4 text-3xl font-bold">
+                 {name ? name.charAt(0).toUpperCase() : 'U'}
+               </div>
+             )}
              <h3 className="font-semibold text-lg text-surface-900 dark:text-surface-50">
                {name || 'User'}
              </h3>
@@ -128,6 +142,94 @@ export default function ProfilePage() {
           </Card>
         </div>
       </div>
+
+      {/* Danger Zone */}
+      <Card className="border-expense-200 dark:border-expense-900/50 overflow-hidden">
+        <div className="px-6 py-4 bg-expense-50 dark:bg-expense-950/20 border-b border-expense-200 dark:border-expense-900/50">
+          <h3 className="font-semibold text-expense-700 dark:text-expense-400 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4" />
+            Danger Zone
+          </h3>
+        </div>
+        <div className="p-6">
+          {!showDeleteConfirm ? (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <p className="font-medium text-surface-900 dark:text-surface-50 text-sm">
+                  Delete Account
+                </p>
+                <p className="text-xs text-surface-500 mt-0.5">
+                  Permanently delete your account and all associated data. This action cannot be undone.
+                </p>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                <Trash2 className="w-4 h-4 mr-1.5" />
+                Delete Account
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="p-4 rounded-xl bg-expense-50 dark:bg-expense-950/20 border border-expense-200 dark:border-expense-900/50">
+                <p className="text-sm font-medium text-expense-700 dark:text-expense-400 mb-1">
+                  This will permanently delete:
+                </p>
+                <ul className="text-xs text-expense-600 dark:text-expense-500 space-y-1">
+                  <li>- Your profile and account</li>
+                  <li>- All cash books</li>
+                  <li>- All transactions</li>
+                  <li>- All categories</li>
+                </ul>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-surface-900 dark:text-surface-50">
+                  Type <span className="font-bold text-expense-600">DELETE</span> to confirm
+                </label>
+                <Input
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="Type DELETE"
+                  disabled={deleteAccount.isPending}
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  disabled={deleteConfirmText !== 'DELETE' || deleteAccount.isPending}
+                  isLoading={deleteAccount.isPending}
+                  onClick={async () => {
+                    try {
+                      await deleteAccount.mutateAsync();
+                    } catch {
+                      toast.error('Failed to delete account. Please try again.');
+                    }
+                  }}
+                >
+                  <Trash2 className="w-4 h-4 mr-1.5" />
+                  Permanently Delete
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteConfirmText('');
+                  }}
+                  disabled={deleteAccount.isPending}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { Inbox } from 'lucide-react';
 import { Button } from './button';
 
 interface EmptyStateProps {
@@ -18,21 +18,9 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-      {icon ? (
-        <div className="w-20 h-20 mb-6 bg-surface-100 dark:bg-surface-800 rounded-full flex items-center justify-center text-surface-400">
-          {icon}
-        </div>
-      ) : (
-        <div className="relative w-48 h-48 mb-6 drop-shadow-sm opacity-90">
-          <Image
-            src="/empty-illustration.png"
-            alt="Empty state illustration"
-            fill
-            className="object-contain"
-            priority
-          />
-        </div>
-      )}
+      <div className="w-20 h-20 mb-6 bg-primary-50 dark:bg-primary-950/30 rounded-full flex items-center justify-center">
+        {icon ?? <Inbox className="w-9 h-9 text-primary-500 dark:text-primary-400" />}
+      </div>
       <h3 className="text-xl font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
         {title}
       </h3>

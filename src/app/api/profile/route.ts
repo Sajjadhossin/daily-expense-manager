@@ -17,6 +17,7 @@ export async function GET(req: Request) {
         id: true,
         name: true,
         email: true,
+        image: true,
         avatarUrl: true,
         createdAt: true,
       },
@@ -29,6 +30,24 @@ export async function GET(req: Request) {
     return NextResponse.json(profile);
   } catch (error) {
     console.error("[PROFILE_GET]", error);
+    return new NextResponse("Internal Error", { status: 500 });
+  }
+}
+
+export async function DELETE() {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    await prisma.user.delete({
+      where: { id: session.user.id },
+    });
+
+    return new NextResponse(null, { status: 204 });
+  } catch (error) {
+    console.error("[PROFILE_DELETE]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
@@ -70,6 +89,7 @@ export async function PATCH(req: Request) {
         id: true,
         name: true,
         email: true,
+        image: true,
         avatarUrl: true,
       },
     });

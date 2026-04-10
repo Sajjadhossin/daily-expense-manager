@@ -122,7 +122,7 @@ function ScrollColumn<T extends string | number>({
   const containerRef = React.useRef<HTMLDivElement>(null);
   const itemRefs = React.useRef<Map<number, HTMLButtonElement>>(new Map());
   const isScrolling = React.useRef(false);
-  const scrollTimeout = React.useRef<ReturnType<typeof setTimeout>>();
+  const scrollTimeout = React.useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Scroll selected item into view on mount and when selected changes
   React.useEffect(() => {

@@ -336,7 +336,6 @@ export default function AppLayout({
 }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showAddSheet, setShowAddSheet] = useState(false);
-
   return (
     <AuthGuard>
       <div className="flex min-h-dvh overflow-x-hidden">

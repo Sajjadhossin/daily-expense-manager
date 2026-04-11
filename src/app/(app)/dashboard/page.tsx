@@ -29,12 +29,12 @@ export default function DashboardPage() {
   const user = session?.user;
 
   const { activeBookId } = useBookStore();
-  
+
   const { data: books, isLoading: booksLoading } = useBooks();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { data: transactions, isLoading: transactionsLoading } = useTransactions(activeBookId);
 
-  const isLoading = booksLoading || categoriesLoading || transactionsLoading;
+  const isLoading = booksLoading || categoriesLoading || (activeBookId ? transactionsLoading : false);
 
   if (isLoading) {
     return <DashboardSkeleton />;
@@ -79,7 +79,7 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-surface-900 dark:text-surface-50">
-            Welcome back, {user?.name?.split(' ')[0] || 'User'} 👋
+            Welcome, {user?.name?.split(' ')[0] || 'User'} 👋
           </h1>
           <div className="text-sm text-surface-500 mt-1 flex items-center gap-2">
             Currently managing 

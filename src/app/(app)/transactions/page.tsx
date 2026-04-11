@@ -24,10 +24,12 @@ export default function TransactionsPage() {
   const router = useRouter();
   
   const { activeBookId, setActiveBook } = useBookStore();
-  const { data: books } = useBooks();
-  const { data: categories } = useCategories();
-  const { data: rawTransactions, isLoading } = useTransactions(activeBookId);
+  const { data: books, isLoading: booksLoading } = useBooks();
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { data: rawTransactions, isLoading: transactionsLoading } = useTransactions(activeBookId);
   const deleteTransaction = useDeleteTransaction();
+
+  const isLoading = booksLoading || categoriesLoading || (activeBookId ? transactionsLoading : false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);

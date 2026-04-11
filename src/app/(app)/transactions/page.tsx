@@ -530,7 +530,7 @@ export default function TransactionsPage() {
                 variant="destructive" 
                 size="lg" 
                 className="gap-2 h-14"
-                onClick={() => setIsDeleteDialogOpen(true)}
+                onClick={() => { setIsActionsOpen(false); setIsDeleteDialogOpen(true); }}
               >
                 <Trash2 className="w-5 h-5" />
                 Delete
@@ -553,6 +553,7 @@ export default function TransactionsPage() {
         description="Are you sure you want to delete this transaction? This action will immediately adjust your cash book balance."
         confirmText="Delete"
         variant="danger"
+        isLoading={deleteTransaction.isPending}
       />
     </div>
   );

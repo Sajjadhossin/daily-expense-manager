@@ -147,7 +147,7 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 fade-in max-w-4xl overflow-hidden">
+    <div className="space-y-4 sm:space-y-6 fade-in max-w-4xl w-full overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -459,15 +459,15 @@ export default function TransactionsPage() {
                       <div 
                         key={tx.id}
                         onClick={() => handleTransactionClick(tx)}
-                        className={`flex items-center justify-between px-2.5 py-2.5 sm:p-4 cursor-pointer hover:bg-surface-100/50 dark:hover:bg-surface-800/50 transition-colors ${
+                        className={`flex items-center justify-between px-2.5 py-2.5 sm:p-4 cursor-pointer hover:bg-surface-100/50 dark:hover:bg-surface-800/50 transition-colors overflow-hidden ${
                           idx !== groupedTransactions[dateStr].length - 1 ? 'border-b border-surface-200 dark:border-surface-800' : ''
                         }`}
                       >
-                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 overflow-hidden">
                           <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-white shrink-0 ${category?.color || 'bg-surface-400'}`}>
                             <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           </div>
-                          <div className="min-w-0 flex-1">
+                          <div className="min-w-0 flex-1 overflow-hidden">
                             <p className="font-semibold text-xs sm:text-sm text-surface-900 dark:text-surface-50 capitalize truncate">
                               {category?.name || 'Uncategorized'}
                             </p>

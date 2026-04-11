@@ -339,7 +339,7 @@ export default function AppLayout({
 
   return (
     <AuthGuard>
-      <div className="flex min-h-dvh">
+      <div className="flex min-h-dvh overflow-x-hidden">
         {/* Desktop Sidebar */}
         <DesktopSidebar
           collapsed={sidebarCollapsed}
@@ -348,10 +348,10 @@ export default function AppLayout({
 
         {/* Main Content */}
         <main
-          className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[260px]'
+          className={`flex-1 transition-all duration-300 overflow-x-hidden ${sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[260px]'
             } pb-24 lg:pb-8`}
         >
-          <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-6">
+          <div className="max-w-5xl mx-auto px-3 sm:px-4 lg:px-8 py-4 lg:py-6 overflow-x-hidden">
             {children}
           </div>
         </main>

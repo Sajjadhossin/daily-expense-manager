@@ -216,11 +216,11 @@ export default function DashboardPage() {
                       onClick={() => router.push('/transactions')}
                       className="p-4 flex items-center justify-between hover:bg-surface-50/50 dark:hover:bg-surface-900/50 transition-colors cursor-pointer group"
                     >
-                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 ${category?.color || 'bg-surface-400'}`}>
                           <IconComponent className="w-4 h-4" />
                         </div>
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 overflow-hidden">
                           <p className="font-semibold text-sm text-surface-900 dark:text-surface-50 capitalize truncate">
                             {category?.name || 'Uncategorized'}
                           </p>

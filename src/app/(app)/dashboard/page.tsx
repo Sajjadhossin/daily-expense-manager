@@ -110,33 +110,51 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Ledger Status */}
-      <Card className="p-6 md:p-8 gradient-primary text-white border-none shadow-xl shadow-primary-500/10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <Card className="relative overflow-hidden p-6 md:p-8 bg-primary-600 dark:bg-primary-700 text-white border-none shadow-2xl shadow-primary-600/25">
+        {/* Decorative elements */}
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/[0.06] rounded-full" />
+        <div className="absolute -bottom-6 -left-6 w-28 h-28 bg-white/[0.04] rounded-full" />
+
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex-1">
-            <p className="text-primary-100 font-medium text-sm lg:text-base uppercase tracking-wider mb-1">
-              Ledger Balance
-            </p>
-            <h2 className="text-4xl lg:text-5xl font-extrabold tabular-nums tracking-tight">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center">
+                <Icons.Wallet className="w-4 h-4 text-white" />
+              </div>
+              <p className="text-white/90 font-bold text-xs uppercase tracking-[0.15em]">
+                Ledger Balance
+              </p>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tabular-nums tracking-tight text-white">
               {formatCurrency(activeBook.balance, activeBook.currency)}
             </h2>
-            <p className="text-primary-200 text-sm mt-3 opacity-90 max-w-xs leading-relaxed">
-              Available funds across all recorded inflows and outflows in {activeBook.name}.
+            <p className="text-white/60 text-xs sm:text-sm mt-2 max-w-xs leading-relaxed">
+              Available funds in {activeBook.name}.
             </p>
           </div>
-          
-          <div className="w-full md:w-[280px] shrink-0 p-4 rounded-2xl bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/10 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-primary-100 font-medium">This Month In</span>
-              <span className="text-sm font-bold text-white tabular-nums">
+
+          <div className="w-full md:w-[280px] shrink-0 grid grid-cols-2 md:grid-cols-1 gap-3">
+            <div className="rounded-xl bg-white dark:bg-surface-800 p-3.5 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-income-100 dark:bg-income-900/30 flex items-center justify-center">
+                  <TrendingUp className="w-3 h-3 text-income-600 dark:text-income-400" />
+                </div>
+                <span className="text-xs text-surface-500 dark:text-surface-400 font-medium">Month In</span>
+              </div>
+              <p className="text-sm font-bold text-income-600 dark:text-income-400 tabular-nums">
                 {formatSignedCurrency(thisMonthIncome, activeBook.currency)}
-              </span>
+              </p>
             </div>
-            <div className="h-px w-full bg-white/10" />
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-primary-100 font-medium">This Month Out</span>
-              <span className="text-sm font-bold text-white tabular-nums">
+            <div className="rounded-xl bg-white dark:bg-surface-800 p-3.5 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-lg bg-expense-100 dark:bg-expense-900/30 flex items-center justify-center">
+                  <TrendingDown className="w-3 h-3 text-expense-600 dark:text-expense-400" />
+                </div>
+                <span className="text-xs text-surface-500 dark:text-surface-400 font-medium">Month Out</span>
+              </div>
+              <p className="text-sm font-bold text-expense-600 dark:text-expense-400 tabular-nums">
                 {formatSignedCurrency(-thisMonthExpense, activeBook.currency)}
-              </span>
+              </p>
             </div>
           </div>
         </div>
@@ -249,7 +267,8 @@ export default function DashboardPage() {
           <h3 className="font-bold text-surface-900 dark:text-surface-50 text-lg">Quick Links</h3>
           <div className="grid grid-cols-1 gap-3">
             {[
-              { title: 'Full Report', desc: 'Dive into analytics', href: '/summary', color: 'bg-indigo-50 dark:bg-indigo-950/20', text: 'text-indigo-600 dark:text-indigo-400', icon: 'PieChart' },
+              { title: 'Reports', desc: 'Dive into analytics', href: '/reports', color: 'bg-indigo-50 dark:bg-indigo-950/20', text: 'text-indigo-600 dark:text-indigo-400', icon: 'FileBarChart' },
+              { title: 'Summary', desc: 'Overview of your finances', href: '/summary', color: 'bg-violet-50 dark:bg-violet-950/20', text: 'text-violet-600 dark:text-violet-400', icon: 'PieChart' },
               { title: 'Categories', desc: 'Manage your ledger tags', href: '/categories', color: 'bg-emerald-50 dark:bg-emerald-950/20', text: 'text-emerald-600 dark:text-emerald-400', icon: 'Tags' },
               { title: 'Books', desc: 'Switch or add ledgers', href: '/books', color: 'bg-rose-50 dark:bg-rose-950/20', text: 'text-rose-600 dark:text-rose-400', icon: 'Wallet' },
             ].map((link, i) => {

@@ -9,7 +9,9 @@
       "Bash(find:*)",
       "Bash(npx tsc:*)",
       "Bash(xargs grep:*)",
-      "Bash(node -e \"try { require\\('xlsx'\\); console.log\\('xlsx available'\\); } catch\\(e\\) { console.log\\('not installed'\\); }\")"
+      "Bash(node -e \"try { require\\('xlsx'\\); console.log\\('xlsx available'\\); } catch\\(e\\) { console.log\\('not installed'\\); }\")",
+      "Bash(npm ls:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

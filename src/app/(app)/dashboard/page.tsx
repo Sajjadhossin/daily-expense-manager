@@ -20,7 +20,7 @@ import { formatCurrency, formatSignedCurrency } from '@/lib/utils/currency';
 import { EmptyState } from '@/components/ui/empty-state';
 import { DashboardSkeleton } from '@/components/ui/page-skeletons';
 import { SummaryCards } from '@/components/summary/SummaryCards';
-import { OnboardingFlow } from '@/components/onboarding/onboarding-flow';
+
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -281,7 +281,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <OnboardingFlow />
     </div>
   );
 }

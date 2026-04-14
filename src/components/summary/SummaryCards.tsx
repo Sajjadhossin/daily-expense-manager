@@ -19,7 +19,7 @@ export function SummaryCards({ income, expense, currency = 'BDT' }: SummaryCards
           <ArrowUpRight className="w-4 h-4 sm:w-6 sm:h-6" />
         </div>
         <div className="text-center sm:text-left min-w-0 w-full">
-          <p className="text-[10px] sm:text-sm font-medium text-surface-500 mb-0.5">Income</p>
+          <p className="text-[10px] sm:text-sm font-medium text-surface-500 dark:text-surface-300 mb-0.5">Income</p>
           <p className="text-sm sm:text-2xl font-bold tabular-nums text-income-700 dark:text-income-300 truncate">
             <span className="sm:hidden">{formatCompactCurrency(income, currency).replace('+', '')}</span>
             <span className="hidden sm:inline">{formatCurrency(income, currency)}</span>
@@ -33,7 +33,7 @@ export function SummaryCards({ income, expense, currency = 'BDT' }: SummaryCards
           <ArrowDownRight className="w-4 h-4 sm:w-6 sm:h-6" />
         </div>
         <div className="text-center sm:text-left min-w-0 w-full">
-          <p className="text-[10px] sm:text-sm font-medium text-surface-500 mb-0.5">Expense</p>
+          <p className="text-[10px] sm:text-sm font-medium text-surface-500 dark:text-surface-300 mb-0.5">Expense</p>
           <p className="text-sm sm:text-2xl font-bold tabular-nums text-expense-700 dark:text-expense-300 truncate">
             <span className="sm:hidden">{formatCompactCurrency(expense, currency).replace('+', '')}</span>
             <span className="hidden sm:inline">{formatCurrency(expense, currency)}</span>
@@ -47,7 +47,7 @@ export function SummaryCards({ income, expense, currency = 'BDT' }: SummaryCards
           <Wallet className="w-4 h-4 sm:w-6 sm:h-6" />
         </div>
         <div className="text-center sm:text-left min-w-0 w-full">
-          <p className="text-[10px] sm:text-sm font-medium text-surface-500 mb-0.5">Net Flow</p>
+          <p className="text-[10px] sm:text-sm font-medium text-surface-500 dark:text-surface-300 mb-0.5">Net Flow</p>
           <p className={`text-sm sm:text-2xl font-bold tabular-nums truncate ${
             netBalance < 0 ? 'text-expense-600 dark:text-expense-400' : 'text-primary-700 dark:text-primary-300'
           }`}>

@@ -56,7 +56,7 @@ function TransactionForm() {
       if (tx) {
         setType(tx.type as TransactionType);
         setAmount(tx.amount);
-        setCategoryId(tx.categoryId);
+        setCategoryId(tx.categoryId || '');
         setDate(new Date(tx.date));
         setTime(tx.time || format(new Date(tx.date), 'HH:mm'));
         setNote(tx.note || '');

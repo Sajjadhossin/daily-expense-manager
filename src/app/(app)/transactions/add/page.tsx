@@ -18,7 +18,7 @@ import { TransactionFormSkeleton } from '@/components/ui/page-skeletons';
 import { useBookStore } from '@/lib/store/book.store';
 import { useBooks } from '@/lib/hooks/use-books';
 import { formatCurrency, getCurrencySymbol } from '@/lib/utils/currency';
-import { useCategories } from '@/lib/hooks/use-categories';
+import { useCategories, useCreateCategory } from '@/lib/hooks/use-categories';
 import { useTransactions, useCreateTransaction, useUpdateTransaction } from '@/lib/hooks/use-transactions';
 import { Transaction } from '@/generated/client';
 
@@ -31,11 +31,12 @@ function TransactionForm() {
   
   const { activeBookId, setActiveBook } = useBookStore();
   const { data: books } = useBooks();
-  const { data: categories } = useCategories();
+  const { data: categories } = useCategories(activeBookId);
   const { data: transactions } = useTransactions(activeBookId);
 
   const createTransaction = useCreateTransaction();
   const updateTransaction = useUpdateTransaction();
+  const createCategory = useCreateCategory();
 
   const editId = searchParams.get('edit');
   const initialType = (searchParams.get('type') as TransactionType) || 'expense';
@@ -64,13 +65,24 @@ function TransactionForm() {
   }, [editId, transactions]);
 
   const activeBook = (books || []).find((b) => b.id === activeBookId);
-  const availableCategories = (categories || []).filter((c) => c.type === type).sort((a, b) => a.order - b.order);
+  const availableCategories = (categories || []).sort((a, b) => a.order - b.order);
 
   // Map categories for Select component
   const categoryOptions = availableCategories.map((c) => ({
     value: c.id,
     label: c.name,
   }));
+
+  const handleCreateCategory = async (name: string): Promise<string | undefined> => {
+    try {
+      const newCat = await createCategory.mutateAsync({ name, bookId: activeBookId || undefined });
+      toast.success(`Category "${name}" created`);
+      return newCat.id;
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create category');
+      return undefined;
+    }
+  };
 
   const handleSave = async () => {
     if (!activeBook) {
@@ -271,6 +283,8 @@ function TransactionForm() {
             value={categoryId}
             onChange={setCategoryId}
             placeholder="Select a category..."
+            onCreateNew={handleCreateCategory}
+            createNewLabel="Create new category"
           />
         </div>
 

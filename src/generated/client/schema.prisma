@@ -60,6 +60,7 @@ model Book {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   transactions Transaction[]
+  categories   Category[]
 
   @@index([userId])
 }
@@ -67,7 +68,7 @@ model Book {
 model Category {
   id       String  @id @default(cuid())
   name     String
-  type     String
+  type     String  @default("general")
   icon     String  @default("Tag")
   color    String  @default("bg-primary-500")
   isSystem Boolean @default(false)
@@ -76,9 +77,13 @@ model Category {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  bookId String?
+  book   Book?   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
   transactions Transaction[]
 
   @@index([userId, type])
+  @@index([bookId])
 }
 
 model Transaction {
@@ -94,8 +99,8 @@ model Transaction {
   bookId String
   book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
 
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   @@index([bookId, date])
   @@index([categoryId])

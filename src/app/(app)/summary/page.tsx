@@ -22,7 +22,7 @@ export default function SummaryPage() {
   
   const { activeBookId } = useBookStore();
   const { data: books } = useBooks();
-  const { data: categories } = useCategories();
+  const { data: categories } = useCategories(activeBookId);
   const { data: rawTransactions, isLoading } = useTransactions(activeBookId);
 
   const activeBook = (books || []).find(b => b.id === activeBookId);

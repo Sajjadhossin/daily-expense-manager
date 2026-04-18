@@ -25,7 +25,7 @@ export default function TransactionsPage() {
   
   const { activeBookId, setActiveBook } = useBookStore();
   const { data: books, isLoading: booksLoading } = useBooks();
-  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { data: categories, isLoading: categoriesLoading } = useCategories(activeBookId);
   const { data: rawTransactions, isLoading: transactionsLoading } = useTransactions(activeBookId);
   const deleteTransaction = useDeleteTransaction();
 
@@ -354,7 +354,6 @@ export default function TransactionsPage() {
                 All
               </button>
               {(categories || [])
-                .filter((c: any) => filterType === 'all' || c.type === filterType)
                 .map((cat: any) => (
                   <button
                     key={cat.id}

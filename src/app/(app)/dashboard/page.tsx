@@ -31,7 +31,7 @@ export default function DashboardPage() {
   const { activeBookId } = useBookStore();
 
   const { data: books, isLoading: booksLoading } = useBooks();
-  const { data: categories, isLoading: categoriesLoading } = useCategories();
+  const { data: categories, isLoading: categoriesLoading } = useCategories(activeBookId);
   const { data: transactions, isLoading: transactionsLoading } = useTransactions(activeBookId);
 
   const isLoading = booksLoading || categoriesLoading || (activeBookId ? transactionsLoading : false);

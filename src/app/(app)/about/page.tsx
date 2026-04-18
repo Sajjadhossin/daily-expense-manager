@@ -140,7 +140,7 @@ export default function AboutPage() {
         className="text-center text-xs leading-relaxed"
         style={{ color: 'var(--text-muted)' }}
       >
-        Made with <Heart className="w-3 h-3 inline text-expense-500 fill-expense-500" /> by Sajjad Hossin
+        Made with <Heart className="w-3 h-3 inline text-expense-500 fill-expense-500" /> by Sajjad Hossin · Dedicated to Himu
       </motion.p>
     </div>
   );

@@ -9,7 +9,10 @@ export async function GET(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const categories = await prisma.category.findMany({
+    const { searchParams } = new URL(req.url);
+    const bookId = searchParams.get("bookId");
+
+    const allCategories = await prisma.category.findMany({
       where: {
         userId: session.user.id,
       },
@@ -17,6 +20,12 @@ export async function GET(req: Request) {
         order: 'asc',
       },
     });
+
+    // If bookId is provided, return book-specific categories + global ones (bookId = null).
+    // Global includes system defaults and legacy user-created categories.
+    const categories = bookId
+      ? allCategories.filter(c => c.bookId === bookId || c.bookId === null)
+      : allCategories;
 
     return NextResponse.json(categories);
   } catch (error) {
@@ -33,17 +42,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, type, icon, color } = body;
+    const { name, type, icon, color, bookId } = body;
 
-    if (!name || !type) {
+    if (!name) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
-    // Get highest order
+    // Get highest order across all categories for this user
     const lastCategory = await prisma.category.findFirst({
       where: {
         userId: session.user.id,
-        type,
       },
       orderBy: {
         order: 'desc',
@@ -55,12 +63,13 @@ export async function POST(req: Request) {
     const category = await prisma.category.create({
       data: {
         name,
-        type,
+        type: type || "general",
         icon: icon || "Tag",
         color: color || "bg-primary-500",
         order: newOrder,
         isSystem: false,
         userId: session.user.id,
+        ...(bookId ? { bookId } : {}),
       },
     });
 

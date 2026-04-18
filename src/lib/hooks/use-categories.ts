@@ -3,10 +3,10 @@ import { categoriesService, CategoryCreateInput, CategoryUpdateInput } from '@/s
 
 export const CATEGORIES_QUERY_KEY = ['categories'];
 
-export function useCategories() {
+export function useCategories(bookId?: string | null) {
   return useQuery({
-    queryKey: CATEGORIES_QUERY_KEY,
-    queryFn: categoriesService.getAll,
+    queryKey: [...CATEGORIES_QUERY_KEY, bookId ?? 'all'],
+    queryFn: () => categoriesService.getAll(bookId),
   });
 }
 

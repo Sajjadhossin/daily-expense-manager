@@ -167,7 +167,8 @@ exports.Prisma.CategoryScalarFieldEnum = {
   color: 'color',
   isSystem: 'isSystem',
   order: 'order',
-  userId: 'userId'
+  userId: 'userId',
+  bookId: 'bookId'
 };
 
 exports.Prisma.TransactionScalarFieldEnum = {

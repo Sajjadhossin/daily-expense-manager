@@ -1280,10 +1280,12 @@ export namespace Prisma {
 
   export type BookCountOutputType = {
     transactions: number
+    categories: number
   }
 
   export type BookCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transactions?: boolean | BookCountOutputTypeCountTransactionsArgs
+    categories?: boolean | BookCountOutputTypeCountCategoriesArgs
   }
 
   // Custom InputTypes
@@ -1302,6 +1304,13 @@ export namespace Prisma {
    */
   export type BookCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
+  }
+
+  /**
+   * BookCountOutputType without action
+   */
+  export type BookCountOutputTypeCountCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CategoryWhereInput
   }
 
 
@@ -3943,6 +3952,7 @@ export namespace Prisma {
     userId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     transactions?: boolean | Book$transactionsArgs<ExtArgs>
+    categories?: boolean | Book$categoriesArgs<ExtArgs>
     _count?: boolean | BookCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["book"]>
 
@@ -3988,6 +3998,7 @@ export namespace Prisma {
   export type BookInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     transactions?: boolean | Book$transactionsArgs<ExtArgs>
+    categories?: boolean | Book$categoriesArgs<ExtArgs>
     _count?: boolean | BookCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BookIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4002,6 +4013,7 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
+      categories: Prisma.$CategoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4409,6 +4421,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     transactions<T extends Book$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, Book$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    categories<T extends Book$categoriesArgs<ExtArgs> = {}>(args?: Subset<T, Book$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4872,6 +4885,30 @@ export namespace Prisma {
   }
 
   /**
+   * Book.categories
+   */
+  export type Book$categoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CategoryInclude<ExtArgs> | null
+    where?: CategoryWhereInput
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    cursor?: CategoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
    * Book without action
    */
   export type BookDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4919,6 +4956,7 @@ export namespace Prisma {
     isSystem: boolean | null
     order: number | null
     userId: string | null
+    bookId: string | null
   }
 
   export type CategoryMaxAggregateOutputType = {
@@ -4930,6 +4968,7 @@ export namespace Prisma {
     isSystem: boolean | null
     order: number | null
     userId: string | null
+    bookId: string | null
   }
 
   export type CategoryCountAggregateOutputType = {
@@ -4941,6 +4980,7 @@ export namespace Prisma {
     isSystem: number
     order: number
     userId: number
+    bookId: number
     _all: number
   }
 
@@ -4962,6 +5002,7 @@ export namespace Prisma {
     isSystem?: true
     order?: true
     userId?: true
+    bookId?: true
   }
 
   export type CategoryMaxAggregateInputType = {
@@ -4973,6 +5014,7 @@ export namespace Prisma {
     isSystem?: true
     order?: true
     userId?: true
+    bookId?: true
   }
 
   export type CategoryCountAggregateInputType = {
@@ -4984,6 +5026,7 @@ export namespace Prisma {
     isSystem?: true
     order?: true
     userId?: true
+    bookId?: true
     _all?: true
   }
 
@@ -5082,6 +5125,7 @@ export namespace Prisma {
     isSystem: boolean
     order: number
     userId: string
+    bookId: string | null
     _count: CategoryCountAggregateOutputType | null
     _avg: CategoryAvgAggregateOutputType | null
     _sum: CategorySumAggregateOutputType | null
@@ -5112,7 +5156,9 @@ export namespace Prisma {
     isSystem?: boolean
     order?: boolean
     userId?: boolean
+    bookId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    book?: boolean | Category$bookArgs<ExtArgs>
     transactions?: boolean | Category$transactionsArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
@@ -5126,7 +5172,9 @@ export namespace Prisma {
     isSystem?: boolean
     order?: boolean
     userId?: boolean
+    bookId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    book?: boolean | Category$bookArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
 
   export type CategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -5138,7 +5186,9 @@ export namespace Prisma {
     isSystem?: boolean
     order?: boolean
     userId?: boolean
+    bookId?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    book?: boolean | Category$bookArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
 
   export type CategorySelectScalar = {
@@ -5150,25 +5200,30 @@ export namespace Prisma {
     isSystem?: boolean
     order?: boolean
     userId?: boolean
+    bookId?: boolean
   }
 
-  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "icon" | "color" | "isSystem" | "order" | "userId", ExtArgs["result"]["category"]>
+  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "icon" | "color" | "isSystem" | "order" | "userId" | "bookId", ExtArgs["result"]["category"]>
   export type CategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    book?: boolean | Category$bookArgs<ExtArgs>
     transactions?: boolean | Category$transactionsArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    book?: boolean | Category$bookArgs<ExtArgs>
   }
   export type CategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    book?: boolean | Category$bookArgs<ExtArgs>
   }
 
   export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Category"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      book: Prisma.$BookPayload<ExtArgs> | null
       transactions: Prisma.$TransactionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -5180,6 +5235,7 @@ export namespace Prisma {
       isSystem: boolean
       order: number
       userId: string
+      bookId: string | null
     }, ExtArgs["result"]["category"]>
     composites: {}
   }
@@ -5575,6 +5631,7 @@ export namespace Prisma {
   export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    book<T extends Category$bookArgs<ExtArgs> = {}>(args?: Subset<T, Category$bookArgs<ExtArgs>>): Prisma__BookClient<$Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     transactions<T extends Category$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, Category$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5613,6 +5670,7 @@ export namespace Prisma {
     readonly isSystem: FieldRef<"Category", 'Boolean'>
     readonly order: FieldRef<"Category", 'Int'>
     readonly userId: FieldRef<"Category", 'String'>
+    readonly bookId: FieldRef<"Category", 'String'>
   }
     
 
@@ -6014,6 +6072,25 @@ export namespace Prisma {
   }
 
   /**
+   * Category.book
+   */
+  export type Category$bookArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Book
+     */
+    select?: BookSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Book
+     */
+    omit?: BookOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BookInclude<ExtArgs> | null
+    where?: BookWhereInput
+  }
+
+  /**
    * Category.transactions
    */
   export type Category$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6261,7 +6338,7 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     bookId: string
-    categoryId: string
+    categoryId: string | null
     _count: TransactionCountAggregateOutputType | null
     _avg: TransactionAvgAggregateOutputType | null
     _sum: TransactionSumAggregateOutputType | null
@@ -6295,7 +6372,7 @@ export namespace Prisma {
     bookId?: boolean
     categoryId?: boolean
     book?: boolean | BookDefaultArgs<ExtArgs>
-    category?: boolean | CategoryDefaultArgs<ExtArgs>
+    category?: boolean | Transaction$categoryArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6310,7 +6387,7 @@ export namespace Prisma {
     bookId?: boolean
     categoryId?: boolean
     book?: boolean | BookDefaultArgs<ExtArgs>
-    category?: boolean | CategoryDefaultArgs<ExtArgs>
+    category?: boolean | Transaction$categoryArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6325,7 +6402,7 @@ export namespace Prisma {
     bookId?: boolean
     categoryId?: boolean
     book?: boolean | BookDefaultArgs<ExtArgs>
-    category?: boolean | CategoryDefaultArgs<ExtArgs>
+    category?: boolean | Transaction$categoryArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectScalar = {
@@ -6344,22 +6421,22 @@ export namespace Prisma {
   export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "amount" | "date" | "time" | "note" | "createdAt" | "updatedAt" | "bookId" | "categoryId", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     book?: boolean | BookDefaultArgs<ExtArgs>
-    category?: boolean | CategoryDefaultArgs<ExtArgs>
+    category?: boolean | Transaction$categoryArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     book?: boolean | BookDefaultArgs<ExtArgs>
-    category?: boolean | CategoryDefaultArgs<ExtArgs>
+    category?: boolean | Transaction$categoryArgs<ExtArgs>
   }
   export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     book?: boolean | BookDefaultArgs<ExtArgs>
-    category?: boolean | CategoryDefaultArgs<ExtArgs>
+    category?: boolean | Transaction$categoryArgs<ExtArgs>
   }
 
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Transaction"
     objects: {
       book: Prisma.$BookPayload<ExtArgs>
-      category: Prisma.$CategoryPayload<ExtArgs>
+      category: Prisma.$CategoryPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6371,7 +6448,7 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       bookId: string
-      categoryId: string
+      categoryId: string | null
     }, ExtArgs["result"]["transaction"]>
     composites: {}
   }
@@ -6767,7 +6844,7 @@ export namespace Prisma {
   export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     book<T extends BookDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookDefaultArgs<ExtArgs>>): Prisma__BookClient<$Result.GetResult<Prisma.$BookPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    category<T extends CategoryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CategoryDefaultArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    category<T extends Transaction$categoryArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$categoryArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7208,6 +7285,25 @@ export namespace Prisma {
   }
 
   /**
+   * Transaction.category
+   */
+  export type Transaction$categoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CategoryInclude<ExtArgs> | null
+    where?: CategoryWhereInput
+  }
+
+  /**
    * Transaction without action
    */
   export type TransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7296,7 +7392,8 @@ export namespace Prisma {
     color: 'color',
     isSystem: 'isSystem',
     order: 'order',
-    userId: 'userId'
+    userId: 'userId',
+    bookId: 'bookId'
   };
 
   export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
@@ -7602,6 +7699,7 @@ export namespace Prisma {
     userId?: StringFilter<"Book"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     transactions?: TransactionListRelationFilter
+    categories?: CategoryListRelationFilter
   }
 
   export type BookOrderByWithRelationInput = {
@@ -7616,6 +7714,7 @@ export namespace Prisma {
     userId?: SortOrder
     user?: UserOrderByWithRelationInput
     transactions?: TransactionOrderByRelationAggregateInput
+    categories?: CategoryOrderByRelationAggregateInput
   }
 
   export type BookWhereUniqueInput = Prisma.AtLeast<{
@@ -7633,6 +7732,7 @@ export namespace Prisma {
     userId?: StringFilter<"Book"> | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     transactions?: TransactionListRelationFilter
+    categories?: CategoryListRelationFilter
   }, "id">
 
   export type BookOrderByWithAggregationInput = {
@@ -7679,7 +7779,9 @@ export namespace Prisma {
     isSystem?: BoolFilter<"Category"> | boolean
     order?: IntFilter<"Category"> | number
     userId?: StringFilter<"Category"> | string
+    bookId?: StringNullableFilter<"Category"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    book?: XOR<BookNullableScalarRelationFilter, BookWhereInput> | null
     transactions?: TransactionListRelationFilter
   }
 
@@ -7692,7 +7794,9 @@ export namespace Prisma {
     isSystem?: SortOrder
     order?: SortOrder
     userId?: SortOrder
+    bookId?: SortOrderInput | SortOrder
     user?: UserOrderByWithRelationInput
+    book?: BookOrderByWithRelationInput
     transactions?: TransactionOrderByRelationAggregateInput
   }
 
@@ -7708,7 +7812,9 @@ export namespace Prisma {
     isSystem?: BoolFilter<"Category"> | boolean
     order?: IntFilter<"Category"> | number
     userId?: StringFilter<"Category"> | string
+    bookId?: StringNullableFilter<"Category"> | string | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    book?: XOR<BookNullableScalarRelationFilter, BookWhereInput> | null
     transactions?: TransactionListRelationFilter
   }, "id">
 
@@ -7721,6 +7827,7 @@ export namespace Prisma {
     isSystem?: SortOrder
     order?: SortOrder
     userId?: SortOrder
+    bookId?: SortOrderInput | SortOrder
     _count?: CategoryCountOrderByAggregateInput
     _avg?: CategoryAvgOrderByAggregateInput
     _max?: CategoryMaxOrderByAggregateInput
@@ -7740,6 +7847,7 @@ export namespace Prisma {
     isSystem?: BoolWithAggregatesFilter<"Category"> | boolean
     order?: IntWithAggregatesFilter<"Category"> | number
     userId?: StringWithAggregatesFilter<"Category"> | string
+    bookId?: StringNullableWithAggregatesFilter<"Category"> | string | null
   }
 
   export type TransactionWhereInput = {
@@ -7755,9 +7863,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     bookId?: StringFilter<"Transaction"> | string
-    categoryId?: StringFilter<"Transaction"> | string
+    categoryId?: StringNullableFilter<"Transaction"> | string | null
     book?: XOR<BookScalarRelationFilter, BookWhereInput>
-    category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
+    category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
   }
 
   export type TransactionOrderByWithRelationInput = {
@@ -7770,7 +7878,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     bookId?: SortOrder
-    categoryId?: SortOrder
+    categoryId?: SortOrderInput | SortOrder
     book?: BookOrderByWithRelationInput
     category?: CategoryOrderByWithRelationInput
   }
@@ -7788,9 +7896,9 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     bookId?: StringFilter<"Transaction"> | string
-    categoryId?: StringFilter<"Transaction"> | string
+    categoryId?: StringNullableFilter<"Transaction"> | string | null
     book?: XOR<BookScalarRelationFilter, BookWhereInput>
-    category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
+    category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
   }, "id">
 
   export type TransactionOrderByWithAggregationInput = {
@@ -7803,7 +7911,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     bookId?: SortOrder
-    categoryId?: SortOrder
+    categoryId?: SortOrderInput | SortOrder
     _count?: TransactionCountOrderByAggregateInput
     _avg?: TransactionAvgOrderByAggregateInput
     _max?: TransactionMaxOrderByAggregateInput
@@ -7824,7 +7932,7 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     bookId?: StringWithAggregatesFilter<"Transaction"> | string
-    categoryId?: StringWithAggregatesFilter<"Transaction"> | string
+    categoryId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
   }
 
   export type UserCreateInput = {
@@ -8038,6 +8146,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutBooksInput
     transactions?: TransactionCreateNestedManyWithoutBookInput
+    categories?: CategoryCreateNestedManyWithoutBookInput
   }
 
   export type BookUncheckedCreateInput = {
@@ -8051,6 +8160,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userId: string
     transactions?: TransactionUncheckedCreateNestedManyWithoutBookInput
+    categories?: CategoryUncheckedCreateNestedManyWithoutBookInput
   }
 
   export type BookUpdateInput = {
@@ -8064,6 +8174,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutBooksNestedInput
     transactions?: TransactionUpdateManyWithoutBookNestedInput
+    categories?: CategoryUpdateManyWithoutBookNestedInput
   }
 
   export type BookUncheckedUpdateInput = {
@@ -8077,6 +8188,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
     transactions?: TransactionUncheckedUpdateManyWithoutBookNestedInput
+    categories?: CategoryUncheckedUpdateManyWithoutBookNestedInput
   }
 
   export type BookCreateManyInput = {
@@ -8117,24 +8229,26 @@ export namespace Prisma {
   export type CategoryCreateInput = {
     id?: string
     name: string
-    type: string
+    type?: string
     icon?: string
     color?: string
     isSystem?: boolean
     order?: number
     user: UserCreateNestedOneWithoutCategoriesInput
+    book?: BookCreateNestedOneWithoutCategoriesInput
     transactions?: TransactionCreateNestedManyWithoutCategoryInput
   }
 
   export type CategoryUncheckedCreateInput = {
     id?: string
     name: string
-    type: string
+    type?: string
     icon?: string
     color?: string
     isSystem?: boolean
     order?: number
     userId: string
+    bookId?: string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutCategoryInput
   }
 
@@ -8147,6 +8261,7 @@ export namespace Prisma {
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     user?: UserUpdateOneRequiredWithoutCategoriesNestedInput
+    book?: BookUpdateOneWithoutCategoriesNestedInput
     transactions?: TransactionUpdateManyWithoutCategoryNestedInput
   }
 
@@ -8159,18 +8274,20 @@ export namespace Prisma {
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
+    bookId?: NullableStringFieldUpdateOperationsInput | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutCategoryNestedInput
   }
 
   export type CategoryCreateManyInput = {
     id?: string
     name: string
-    type: string
+    type?: string
     icon?: string
     color?: string
     isSystem?: boolean
     order?: number
     userId: string
+    bookId?: string | null
   }
 
   export type CategoryUpdateManyMutationInput = {
@@ -8192,6 +8309,7 @@ export namespace Prisma {
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
+    bookId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionCreateInput = {
@@ -8204,7 +8322,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     book: BookCreateNestedOneWithoutTransactionsInput
-    category: CategoryCreateNestedOneWithoutTransactionsInput
+    category?: CategoryCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateInput = {
@@ -8217,7 +8335,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     bookId: string
-    categoryId: string
+    categoryId?: string | null
   }
 
   export type TransactionUpdateInput = {
@@ -8230,7 +8348,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     book?: BookUpdateOneRequiredWithoutTransactionsNestedInput
-    category?: CategoryUpdateOneRequiredWithoutTransactionsNestedInput
+    category?: CategoryUpdateOneWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
@@ -8243,7 +8361,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookId?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionCreateManyInput = {
@@ -8256,7 +8374,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     bookId: string
-    categoryId: string
+    categoryId?: string | null
   }
 
   export type TransactionUpdateManyMutationInput = {
@@ -8280,7 +8398,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookId?: StringFieldUpdateOperationsInput | string
-    categoryId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -8665,6 +8783,11 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type BookNullableScalarRelationFilter = {
+    is?: BookWhereInput | null
+    isNot?: BookWhereInput | null
+  }
+
   export type CategoryCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -8674,6 +8797,7 @@ export namespace Prisma {
     isSystem?: SortOrder
     order?: SortOrder
     userId?: SortOrder
+    bookId?: SortOrder
   }
 
   export type CategoryAvgOrderByAggregateInput = {
@@ -8689,6 +8813,7 @@ export namespace Prisma {
     isSystem?: SortOrder
     order?: SortOrder
     userId?: SortOrder
+    bookId?: SortOrder
   }
 
   export type CategoryMinOrderByAggregateInput = {
@@ -8700,6 +8825,7 @@ export namespace Prisma {
     isSystem?: SortOrder
     order?: SortOrder
     userId?: SortOrder
+    bookId?: SortOrder
   }
 
   export type CategorySumOrderByAggregateInput = {
@@ -8727,9 +8853,9 @@ export namespace Prisma {
     isNot?: BookWhereInput
   }
 
-  export type CategoryScalarRelationFilter = {
-    is?: CategoryWhereInput
-    isNot?: CategoryWhereInput
+  export type CategoryNullableScalarRelationFilter = {
+    is?: CategoryWhereInput | null
+    isNot?: CategoryWhereInput | null
   }
 
   export type TransactionCountOrderByAggregateInput = {
@@ -8956,11 +9082,25 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
+  export type CategoryCreateNestedManyWithoutBookInput = {
+    create?: XOR<CategoryCreateWithoutBookInput, CategoryUncheckedCreateWithoutBookInput> | CategoryCreateWithoutBookInput[] | CategoryUncheckedCreateWithoutBookInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutBookInput | CategoryCreateOrConnectWithoutBookInput[]
+    createMany?: CategoryCreateManyBookInputEnvelope
+    connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+  }
+
   export type TransactionUncheckedCreateNestedManyWithoutBookInput = {
     create?: XOR<TransactionCreateWithoutBookInput, TransactionUncheckedCreateWithoutBookInput> | TransactionCreateWithoutBookInput[] | TransactionUncheckedCreateWithoutBookInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutBookInput | TransactionCreateOrConnectWithoutBookInput[]
     createMany?: TransactionCreateManyBookInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type CategoryUncheckedCreateNestedManyWithoutBookInput = {
+    create?: XOR<CategoryCreateWithoutBookInput, CategoryUncheckedCreateWithoutBookInput> | CategoryCreateWithoutBookInput[] | CategoryUncheckedCreateWithoutBookInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutBookInput | CategoryCreateOrConnectWithoutBookInput[]
+    createMany?: CategoryCreateManyBookInputEnvelope
+    connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -8997,6 +9137,20 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type CategoryUpdateManyWithoutBookNestedInput = {
+    create?: XOR<CategoryCreateWithoutBookInput, CategoryUncheckedCreateWithoutBookInput> | CategoryCreateWithoutBookInput[] | CategoryUncheckedCreateWithoutBookInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutBookInput | CategoryCreateOrConnectWithoutBookInput[]
+    upsert?: CategoryUpsertWithWhereUniqueWithoutBookInput | CategoryUpsertWithWhereUniqueWithoutBookInput[]
+    createMany?: CategoryCreateManyBookInputEnvelope
+    set?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+    disconnect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+    delete?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+    connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+    update?: CategoryUpdateWithWhereUniqueWithoutBookInput | CategoryUpdateWithWhereUniqueWithoutBookInput[]
+    updateMany?: CategoryUpdateManyWithWhereWithoutBookInput | CategoryUpdateManyWithWhereWithoutBookInput[]
+    deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
+  }
+
   export type TransactionUncheckedUpdateManyWithoutBookNestedInput = {
     create?: XOR<TransactionCreateWithoutBookInput, TransactionUncheckedCreateWithoutBookInput> | TransactionCreateWithoutBookInput[] | TransactionUncheckedCreateWithoutBookInput[]
     connectOrCreate?: TransactionCreateOrConnectWithoutBookInput | TransactionCreateOrConnectWithoutBookInput[]
@@ -9011,10 +9165,30 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
+  export type CategoryUncheckedUpdateManyWithoutBookNestedInput = {
+    create?: XOR<CategoryCreateWithoutBookInput, CategoryUncheckedCreateWithoutBookInput> | CategoryCreateWithoutBookInput[] | CategoryUncheckedCreateWithoutBookInput[]
+    connectOrCreate?: CategoryCreateOrConnectWithoutBookInput | CategoryCreateOrConnectWithoutBookInput[]
+    upsert?: CategoryUpsertWithWhereUniqueWithoutBookInput | CategoryUpsertWithWhereUniqueWithoutBookInput[]
+    createMany?: CategoryCreateManyBookInputEnvelope
+    set?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+    disconnect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+    delete?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+    connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+    update?: CategoryUpdateWithWhereUniqueWithoutBookInput | CategoryUpdateWithWhereUniqueWithoutBookInput[]
+    updateMany?: CategoryUpdateManyWithWhereWithoutBookInput | CategoryUpdateManyWithWhereWithoutBookInput[]
+    deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutCategoriesInput = {
     create?: XOR<UserCreateWithoutCategoriesInput, UserUncheckedCreateWithoutCategoriesInput>
     connectOrCreate?: UserCreateOrConnectWithoutCategoriesInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type BookCreateNestedOneWithoutCategoriesInput = {
+    create?: XOR<BookCreateWithoutCategoriesInput, BookUncheckedCreateWithoutCategoriesInput>
+    connectOrCreate?: BookCreateOrConnectWithoutCategoriesInput
+    connect?: BookWhereUniqueInput
   }
 
   export type TransactionCreateNestedManyWithoutCategoryInput = {
@@ -9045,6 +9219,16 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutCategoriesInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCategoriesInput, UserUpdateWithoutCategoriesInput>, UserUncheckedUpdateWithoutCategoriesInput>
+  }
+
+  export type BookUpdateOneWithoutCategoriesNestedInput = {
+    create?: XOR<BookCreateWithoutCategoriesInput, BookUncheckedCreateWithoutCategoriesInput>
+    connectOrCreate?: BookCreateOrConnectWithoutCategoriesInput
+    upsert?: BookUpsertWithoutCategoriesInput
+    disconnect?: BookWhereInput | boolean
+    delete?: BookWhereInput | boolean
+    connect?: BookWhereUniqueInput
+    update?: XOR<XOR<BookUpdateToOneWithWhereWithoutCategoriesInput, BookUpdateWithoutCategoriesInput>, BookUncheckedUpdateWithoutCategoriesInput>
   }
 
   export type TransactionUpdateManyWithoutCategoryNestedInput = {
@@ -9095,10 +9279,12 @@ export namespace Prisma {
     update?: XOR<XOR<BookUpdateToOneWithWhereWithoutTransactionsInput, BookUpdateWithoutTransactionsInput>, BookUncheckedUpdateWithoutTransactionsInput>
   }
 
-  export type CategoryUpdateOneRequiredWithoutTransactionsNestedInput = {
+  export type CategoryUpdateOneWithoutTransactionsNestedInput = {
     create?: XOR<CategoryCreateWithoutTransactionsInput, CategoryUncheckedCreateWithoutTransactionsInput>
     connectOrCreate?: CategoryCreateOrConnectWithoutTransactionsInput
     upsert?: CategoryUpsertWithoutTransactionsInput
+    disconnect?: CategoryWhereInput | boolean
+    delete?: CategoryWhereInput | boolean
     connect?: CategoryWhereUniqueInput
     update?: XOR<XOR<CategoryUpdateToOneWithWhereWithoutTransactionsInput, CategoryUpdateWithoutTransactionsInput>, CategoryUncheckedUpdateWithoutTransactionsInput>
   }
@@ -9368,6 +9554,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutBookInput
+    categories?: CategoryCreateNestedManyWithoutBookInput
   }
 
   export type BookUncheckedCreateWithoutUserInput = {
@@ -9380,6 +9567,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutBookInput
+    categories?: CategoryUncheckedCreateNestedManyWithoutBookInput
   }
 
   export type BookCreateOrConnectWithoutUserInput = {
@@ -9395,22 +9583,24 @@ export namespace Prisma {
   export type CategoryCreateWithoutUserInput = {
     id?: string
     name: string
-    type: string
+    type?: string
     icon?: string
     color?: string
     isSystem?: boolean
     order?: number
+    book?: BookCreateNestedOneWithoutCategoriesInput
     transactions?: TransactionCreateNestedManyWithoutCategoryInput
   }
 
   export type CategoryUncheckedCreateWithoutUserInput = {
     id?: string
     name: string
-    type: string
+    type?: string
     icon?: string
     color?: string
     isSystem?: boolean
     order?: number
+    bookId?: string | null
     transactions?: TransactionUncheckedCreateNestedManyWithoutCategoryInput
   }
 
@@ -9517,6 +9707,7 @@ export namespace Prisma {
     isSystem?: BoolFilter<"Category"> | boolean
     order?: IntFilter<"Category"> | number
     userId?: StringFilter<"Category"> | string
+    bookId?: StringNullableFilter<"Category"> | string | null
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -9633,7 +9824,7 @@ export namespace Prisma {
     note?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    category: CategoryCreateNestedOneWithoutTransactionsInput
+    category?: CategoryCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateWithoutBookInput = {
@@ -9645,7 +9836,7 @@ export namespace Prisma {
     note?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    categoryId: string
+    categoryId?: string | null
   }
 
   export type TransactionCreateOrConnectWithoutBookInput = {
@@ -9655,6 +9846,40 @@ export namespace Prisma {
 
   export type TransactionCreateManyBookInputEnvelope = {
     data: TransactionCreateManyBookInput | TransactionCreateManyBookInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CategoryCreateWithoutBookInput = {
+    id?: string
+    name: string
+    type?: string
+    icon?: string
+    color?: string
+    isSystem?: boolean
+    order?: number
+    user: UserCreateNestedOneWithoutCategoriesInput
+    transactions?: TransactionCreateNestedManyWithoutCategoryInput
+  }
+
+  export type CategoryUncheckedCreateWithoutBookInput = {
+    id?: string
+    name: string
+    type?: string
+    icon?: string
+    color?: string
+    isSystem?: boolean
+    order?: number
+    userId: string
+    transactions?: TransactionUncheckedCreateNestedManyWithoutCategoryInput
+  }
+
+  export type CategoryCreateOrConnectWithoutBookInput = {
+    where: CategoryWhereUniqueInput
+    create: XOR<CategoryCreateWithoutBookInput, CategoryUncheckedCreateWithoutBookInput>
+  }
+
+  export type CategoryCreateManyBookInputEnvelope = {
+    data: CategoryCreateManyBookInput | CategoryCreateManyBookInput[]
     skipDuplicates?: boolean
   }
 
@@ -9726,7 +9951,23 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     bookId?: StringFilter<"Transaction"> | string
-    categoryId?: StringFilter<"Transaction"> | string
+    categoryId?: StringNullableFilter<"Transaction"> | string | null
+  }
+
+  export type CategoryUpsertWithWhereUniqueWithoutBookInput = {
+    where: CategoryWhereUniqueInput
+    update: XOR<CategoryUpdateWithoutBookInput, CategoryUncheckedUpdateWithoutBookInput>
+    create: XOR<CategoryCreateWithoutBookInput, CategoryUncheckedCreateWithoutBookInput>
+  }
+
+  export type CategoryUpdateWithWhereUniqueWithoutBookInput = {
+    where: CategoryWhereUniqueInput
+    data: XOR<CategoryUpdateWithoutBookInput, CategoryUncheckedUpdateWithoutBookInput>
+  }
+
+  export type CategoryUpdateManyWithWhereWithoutBookInput = {
+    where: CategoryScalarWhereInput
+    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutBookInput>
   }
 
   export type UserCreateWithoutCategoriesInput = {
@@ -9760,6 +10001,37 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutCategoriesInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutCategoriesInput, UserUncheckedCreateWithoutCategoriesInput>
+  }
+
+  export type BookCreateWithoutCategoriesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isDefault?: boolean
+    balance?: number
+    currency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutBooksInput
+    transactions?: TransactionCreateNestedManyWithoutBookInput
+  }
+
+  export type BookUncheckedCreateWithoutCategoriesInput = {
+    id?: string
+    name: string
+    description?: string | null
+    isDefault?: boolean
+    balance?: number
+    currency?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userId: string
+    transactions?: TransactionUncheckedCreateNestedManyWithoutBookInput
+  }
+
+  export type BookCreateOrConnectWithoutCategoriesInput = {
+    where: BookWhereUniqueInput
+    create: XOR<BookCreateWithoutCategoriesInput, BookUncheckedCreateWithoutCategoriesInput>
   }
 
   export type TransactionCreateWithoutCategoryInput = {
@@ -9835,6 +10107,43 @@ export namespace Prisma {
     books?: BookUncheckedUpdateManyWithoutUserNestedInput
   }
 
+  export type BookUpsertWithoutCategoriesInput = {
+    update: XOR<BookUpdateWithoutCategoriesInput, BookUncheckedUpdateWithoutCategoriesInput>
+    create: XOR<BookCreateWithoutCategoriesInput, BookUncheckedCreateWithoutCategoriesInput>
+    where?: BookWhereInput
+  }
+
+  export type BookUpdateToOneWithWhereWithoutCategoriesInput = {
+    where?: BookWhereInput
+    data: XOR<BookUpdateWithoutCategoriesInput, BookUncheckedUpdateWithoutCategoriesInput>
+  }
+
+  export type BookUpdateWithoutCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    balance?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutBooksNestedInput
+    transactions?: TransactionUpdateManyWithoutBookNestedInput
+  }
+
+  export type BookUncheckedUpdateWithoutCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    balance?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    transactions?: TransactionUncheckedUpdateManyWithoutBookNestedInput
+  }
+
   export type TransactionUpsertWithWhereUniqueWithoutCategoryInput = {
     where: TransactionWhereUniqueInput
     update: XOR<TransactionUpdateWithoutCategoryInput, TransactionUncheckedUpdateWithoutCategoryInput>
@@ -9861,6 +10170,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutBooksInput
+    categories?: CategoryCreateNestedManyWithoutBookInput
   }
 
   export type BookUncheckedCreateWithoutTransactionsInput = {
@@ -9873,6 +10183,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: string
+    categories?: CategoryUncheckedCreateNestedManyWithoutBookInput
   }
 
   export type BookCreateOrConnectWithoutTransactionsInput = {
@@ -9883,23 +10194,25 @@ export namespace Prisma {
   export type CategoryCreateWithoutTransactionsInput = {
     id?: string
     name: string
-    type: string
+    type?: string
     icon?: string
     color?: string
     isSystem?: boolean
     order?: number
     user: UserCreateNestedOneWithoutCategoriesInput
+    book?: BookCreateNestedOneWithoutCategoriesInput
   }
 
   export type CategoryUncheckedCreateWithoutTransactionsInput = {
     id?: string
     name: string
-    type: string
+    type?: string
     icon?: string
     color?: string
     isSystem?: boolean
     order?: number
     userId: string
+    bookId?: string | null
   }
 
   export type CategoryCreateOrConnectWithoutTransactionsInput = {
@@ -9928,6 +10241,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutBooksNestedInput
+    categories?: CategoryUpdateManyWithoutBookNestedInput
   }
 
   export type BookUncheckedUpdateWithoutTransactionsInput = {
@@ -9940,6 +10254,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+    categories?: CategoryUncheckedUpdateManyWithoutBookNestedInput
   }
 
   export type CategoryUpsertWithoutTransactionsInput = {
@@ -9962,6 +10277,7 @@ export namespace Prisma {
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     user?: UserUpdateOneRequiredWithoutCategoriesNestedInput
+    book?: BookUpdateOneWithoutCategoriesNestedInput
   }
 
   export type CategoryUncheckedUpdateWithoutTransactionsInput = {
@@ -9973,6 +10289,7 @@ export namespace Prisma {
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
     userId?: StringFieldUpdateOperationsInput | string
+    bookId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type AccountCreateManyUserInput = {
@@ -10003,11 +10320,12 @@ export namespace Prisma {
   export type CategoryCreateManyUserInput = {
     id?: string
     name: string
-    type: string
+    type?: string
     icon?: string
     color?: string
     isSystem?: boolean
     order?: number
+    bookId?: string | null
   }
 
   export type AccountUpdateWithoutUserInput = {
@@ -10062,6 +10380,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUpdateManyWithoutBookNestedInput
+    categories?: CategoryUpdateManyWithoutBookNestedInput
   }
 
   export type BookUncheckedUpdateWithoutUserInput = {
@@ -10074,6 +10393,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutBookNestedInput
+    categories?: CategoryUncheckedUpdateManyWithoutBookNestedInput
   }
 
   export type BookUncheckedUpdateManyWithoutUserInput = {
@@ -10095,6 +10415,7 @@ export namespace Prisma {
     color?: StringFieldUpdateOperationsInput | string
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
+    book?: BookUpdateOneWithoutCategoriesNestedInput
     transactions?: TransactionUpdateManyWithoutCategoryNestedInput
   }
 
@@ -10106,6 +10427,7 @@ export namespace Prisma {
     color?: StringFieldUpdateOperationsInput | string
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
+    bookId?: NullableStringFieldUpdateOperationsInput | string | null
     transactions?: TransactionUncheckedUpdateManyWithoutCategoryNestedInput
   }
 
@@ -10117,6 +10439,7 @@ export namespace Prisma {
     color?: StringFieldUpdateOperationsInput | string
     isSystem?: BoolFieldUpdateOperationsInput | boolean
     order?: IntFieldUpdateOperationsInput | number
+    bookId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionCreateManyBookInput = {
@@ -10128,7 +10451,18 @@ export namespace Prisma {
     note?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    categoryId: string
+    categoryId?: string | null
+  }
+
+  export type CategoryCreateManyBookInput = {
+    id?: string
+    name: string
+    type?: string
+    icon?: string
+    color?: string
+    isSystem?: boolean
+    order?: number
+    userId: string
   }
 
   export type TransactionUpdateWithoutBookInput = {
@@ -10140,7 +10474,7 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    category?: CategoryUpdateOneRequiredWithoutTransactionsNestedInput
+    category?: CategoryUpdateOneWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutBookInput = {
@@ -10152,7 +10486,7 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    categoryId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TransactionUncheckedUpdateManyWithoutBookInput = {
@@ -10164,7 +10498,42 @@ export namespace Prisma {
     note?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    categoryId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CategoryUpdateWithoutBookInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    icon?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    user?: UserUpdateOneRequiredWithoutCategoriesNestedInput
+    transactions?: TransactionUpdateManyWithoutCategoryNestedInput
+  }
+
+  export type CategoryUncheckedUpdateWithoutBookInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    icon?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    transactions?: TransactionUncheckedUpdateManyWithoutCategoryNestedInput
+  }
+
+  export type CategoryUncheckedUpdateManyWithoutBookInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    icon?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    isSystem?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type TransactionCreateManyCategoryInput = {

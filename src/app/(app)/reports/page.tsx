@@ -29,7 +29,7 @@ export default function ReportsPage() {
   
   const { activeBookId } = useBookStore();
   const { data: books } = useBooks();
-  const { data: categories } = useCategories();
+  const { data: categories } = useCategories(activeBookId);
   const { data: rawTransactions, isLoading } = useTransactions(activeBookId);
 
   const [dateType, setDateType] = useState<DateRangeType>('this_month');

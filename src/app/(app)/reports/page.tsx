@@ -3,17 +3,17 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, parseISO } from 'date-fns';
-import { ArrowDownToLine, FileText, FileSpreadsheet, ChevronLeft } from 'lucide-react';
+import { ArrowDownToLine, FileText, FileSpreadsheet, ChevronLeft, Edit2, Trash2 } from 'lucide-react';
 
 import { useBookStore } from '@/lib/store/book.store';
 import { useBooks } from '@/lib/hooks/use-books';
 import { useCategories } from '@/lib/hooks/use-categories';
-import { useTransactions } from '@/lib/hooks/use-transactions';
+import { useTransactions, useDeleteTransaction } from '@/lib/hooks/use-transactions';
 
 import { DateRangeType, DateRange, getDateRange } from '@/lib/utils/date';
 import { generateReportPdf } from '@/lib/utils/pdf';
 import { generateReportExcel } from '@/lib/utils/excel';
-import { formatSignedCurrency } from '@/lib/utils/currency';
+import { formatCurrency, formatSignedCurrency } from '@/lib/utils/currency';
 
 import { EmptyState } from '@/components/ui/empty-state';
 import { ReportsSkeleton } from '@/components/ui/page-skeletons';
@@ -22,6 +22,9 @@ import { SummaryCards } from '@/components/summary/SummaryCards';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select } from '@/components/ui/select';
+import { BottomSheet } from '@/components/ui/bottom-sheet';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { Transaction } from '../../../generated/client';
 import * as Icons from 'lucide-react';
 
 export default function ReportsPage() {
@@ -31,10 +34,38 @@ export default function ReportsPage() {
   const { data: books } = useBooks();
   const { data: categories } = useCategories(activeBookId);
   const { data: rawTransactions, isLoading } = useTransactions(activeBookId);
+  const deleteTransaction = useDeleteTransaction();
 
   const [dateType, setDateType] = useState<DateRangeType>('this_month');
   const [currentRange, setCurrentRange] = useState<DateRange>(getDateRange('this_month'));
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const [isActionsOpen, setIsActionsOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleTransactionClick = (tx: Transaction) => {
+    setSelectedTx(tx);
+    setIsActionsOpen(true);
+  };
+
+  const handleEdit = () => {
+    if (selectedTx) {
+      router.push(`/transactions/add?edit=${selectedTx.id}&type=${selectedTx.type}`);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (selectedTx) {
+      try {
+        await deleteTransaction.mutateAsync(selectedTx.id);
+        setIsDeleteDialogOpen(false);
+        setIsActionsOpen(false);
+        setSelectedTx(null);
+      } catch (error) {
+        console.error('Failed to delete', error);
+      }
+    }
+  };
 
   const activeBook = (books || []).find(b => b.id === activeBookId);
 
@@ -198,7 +229,11 @@ export default function ReportsPage() {
                 const cat = (categories || []).find((c) => c.id === tx.categoryId);
                 const isExpense = tx.type === 'expense';
                 return (
-                  <div key={tx.id} className="p-4 flex items-center justify-between gap-3">
+                  <div
+                    key={tx.id}
+                    onClick={() => handleTransactionClick(tx)}
+                    className="p-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-surface-50/50 dark:hover:bg-surface-800/30 transition-colors"
+                  >
                     <div className="flex items-center gap-3 min-w-0">
                       <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${cat?.color || 'bg-surface-400'}`} />
                       <div className="min-w-0">
@@ -237,7 +272,11 @@ export default function ReportsPage() {
                     const cat = (categories || []).find((c) => c.id === tx.categoryId);
                     const isExpense = tx.type === 'expense';
                     return (
-                      <tr key={tx.id} className="hover:bg-surface-50/30 dark:hover:bg-surface-800/10 transition-colors">
+                      <tr
+                        key={tx.id}
+                        onClick={() => handleTransactionClick(tx)}
+                        className="cursor-pointer hover:bg-surface-50/30 dark:hover:bg-surface-800/10 transition-colors"
+                      >
                         <td className="px-4 py-3 whitespace-nowrap">
                           <p className="font-medium text-surface-900 dark:text-surface-50">
                             {format(new Date(tx.date), 'MMM dd, yyyy')}
@@ -281,6 +320,56 @@ export default function ReportsPage() {
             Export generated reports for safekeeping or third-party audits.
          </p>
       </div>
+
+      {/* Transaction Action Sheet */}
+      <BottomSheet isOpen={isActionsOpen} onClose={() => setIsActionsOpen(false)}>
+        {selectedTx && (
+          <div className="space-y-6">
+            <div className="text-center pb-4 border-b border-surface-100 dark:border-surface-800">
+              <p className="text-sm font-medium text-surface-500 uppercase tracking-wider mb-2">Options</p>
+              <h2 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
+                {formatCurrency(selectedTx.amount, activeBook?.currency)}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2 h-14"
+                onClick={handleEdit}
+              >
+                <Edit2 className="w-5 h-5" />
+                Edit
+              </Button>
+              <Button
+                variant="destructive"
+                size="lg"
+                className="gap-2 h-14"
+                onClick={() => { setIsActionsOpen(false); setIsDeleteDialogOpen(true); }}
+              >
+                <Trash2 className="w-5 h-5" />
+                Delete
+              </Button>
+            </div>
+
+            <p className="text-xs text-center text-surface-400 mt-4">
+              Logged on {format(new Date(selectedTx.date), 'MMM dd, yyyy')}
+            </p>
+          </div>
+        )}
+      </BottomSheet>
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Transaction"
+        description="Are you sure you want to delete this transaction? This action will immediately adjust your cash book balance."
+        confirmText="Delete"
+        variant="danger"
+        isLoading={deleteTransaction.isPending}
+      />
     </div>
   );
 }

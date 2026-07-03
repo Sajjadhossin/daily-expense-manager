@@ -10,6 +10,7 @@ import {
 } from 'date-fns';
 
 export type DateRangeType =
+  | 'all'
   | 'today'
   | 'yesterday'
   | 'this_week'
@@ -27,6 +28,12 @@ export const getDateRange = (type: DateRangeType, customStart?: Date, customEnd?
   const now = new Date();
 
   switch (type) {
+    case 'all':
+      return {
+        startDate: new Date(0), // Epoch — captures every past transaction
+        endDate: new Date(9999, 11, 31, 23, 59, 59), // Far future — captures any post-dated entry
+        label: 'All Time',
+      };
     case 'today':
       return {
         startDate: startOfDay(now),

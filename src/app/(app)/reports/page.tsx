@@ -21,7 +21,7 @@ import { DateFilter } from '@/components/summary/DateFilter';
 import { SummaryCards } from '@/components/summary/SummaryCards';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Select } from '@/components/ui/select';
+import { MultiSelect } from '@/components/ui/multi-select';
 import { BottomSheet } from '@/components/ui/bottom-sheet';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Transaction } from '../../../generated/client';
@@ -38,7 +38,7 @@ export default function ReportsPage() {
 
   const [dateType, setDateType] = useState<DateRangeType>('this_month');
   const [currentRange, setCurrentRange] = useState<DateRange>(getDateRange('this_month'));
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -85,18 +85,15 @@ export default function ReportsPage() {
     setDateType(type);
   };
 
-  // Format category options for the Select dropdown
-  const categoryOptions = [
-    { value: 'all', label: 'All Categories' },
-    ...(categories || []).map(c => {
-      const Icon = (Icons as any)[c.icon];
-      return {
-        value: c.id,
-        label: c.name,
-        icon: Icon ? <Icon className="w-4 h-4" /> : undefined
-      };
-    })
-  ];
+  // Format category options for the MultiSelect dropdown
+  const categoryOptions = (categories || []).map(c => {
+    const Icon = (Icons as any)[c.icon];
+    return {
+      value: c.id,
+      label: c.name,
+      icon: Icon ? <Icon className="w-4 h-4" /> : undefined
+    };
+  });
 
   // Fetch transactions spanning exactly the bounds
   const startDateMs = currentRange.startDate.getTime();
@@ -107,9 +104,10 @@ export default function ReportsPage() {
     return txDate >= startDateMs && txDate <= endDateMs;
   });
 
-  // Apply Category Filter
-  if (selectedCategory !== 'all') {
-    transactions = transactions.filter(t => t.categoryId === selectedCategory);
+  // Apply Category Filter (empty selection = all categories)
+  if (selectedCategories.length > 0) {
+    const categorySet = new Set(selectedCategories);
+    transactions = transactions.filter(t => t.categoryId && categorySet.has(t.categoryId));
   }
 
   const totalIncome = transactions
@@ -127,7 +125,12 @@ export default function ReportsPage() {
     startDate: currentRange.startDate,
     endDate: currentRange.endDate,
     dateRangeLabel: currentRange.label,
-    categoryFilterName: selectedCategory === 'all' ? 'All Categories' : (categories || []).find(c => c.id === selectedCategory)?.name,
+    categoryFilterName: selectedCategories.length === 0
+      ? 'All Categories'
+      : (categories || [])
+          .filter(c => selectedCategories.includes(c.id))
+          .map(c => c.name)
+          .join(', '),
   };
 
   const handleExportPDF = () => generateReportPdf(exportOptions);
@@ -173,12 +176,13 @@ export default function ReportsPage() {
 
       {/* Filters Row */}
       <div className="flex flex-col sm:flex-row sm:items-stretch gap-3">
-        <div className="w-full sm:w-[200px]">
-          <Select
+        <div className="w-full sm:w-[220px]">
+          <MultiSelect
             options={categoryOptions}
-            value={selectedCategory}
-            onChange={setSelectedCategory}
-            placeholder="Filter Category"
+            value={selectedCategories}
+            onChange={setSelectedCategories}
+            allLabel="All Categories"
+            searchPlaceholder="Search categories..."
           />
         </div>
         <DateFilter

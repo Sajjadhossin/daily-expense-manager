@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
 const PRESETS: { label: string; value: DateRangeType }[] = [
+  { label: 'All Time', value: 'all' },
   { label: 'Today', value: 'today' },
   { label: 'Yesterday', value: 'yesterday' },
   { label: 'This Week', value: 'this_week' },
